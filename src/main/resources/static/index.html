@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品列表 - 電子書商城</title>
+    
+    <!-- ✅ 指向本地 CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    
+    <style>
+        /* 💡 博客來風格微調 */
+        body { background-color: #ffffff; font-family: "Microsoft JhengHei", sans-serif; }
+        
+        /* 導覽列背景色 */
+        .navbar { margin-bottom: 0; background-color: #212529 !important; }
+        .nav-link { color: white !important; font-size: 14px; }
+        
+        /* 橘色分類標題樣式 */
+        .section-title {
+            color: #f60; /* 博客來橘 */
+            border-left: 5px solid #f60;
+            padding-left: 12px;
+            font-weight: bold;
+            margin: 40px 0 25px 0;
+            font-size: 1.25rem;
+        }
+
+        /* 移除卡片邊框 */
+        .card { 
+            transition: transform 0.2s; 
+            border: none !important; 
+            background: transparent !important;
+        }
+        .card:hover { transform: translateY(-5px); }
+        
+        /* 調整容器最大寬度 */
+        .container { max-width: 1140px; }
+    </style>
+</head>
+<body>
+
+    <!-- ⭐ 修改重點：改用一個空的 div，由 navbar.js 動態填入內容 -->
+    <div id="navbar"></div>
+
+    <div class="container">
+        <!-- 💡 仿博客來的分類標題 -->
+        <h5 class="section-title">商品總覽</h5>
+
+        <!-- 商品列表容器 -->
+        <div id="product-list" class="row">
+            <!-- JS 會動態填入這裡 -->
+        </div>
+    </div>
+
+    <!-- ✅ 讀取本地腳本 -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/navbar.js"></script> <!-- ⭐ 確保放在 index.js 之後或並列 -->
+
+</body>
+</html>

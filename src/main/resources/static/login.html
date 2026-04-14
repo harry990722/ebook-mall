@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>登入頁面</title>
+</head>
+<body>
+
+    <h2>登入</h2>
+
+    <input type="text" id="username" placeholder="帳號"><br>
+    <input type="password" id="password" placeholder="密碼"><br>
+
+    <button id="loginBtn">登入</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $("#loginBtn").click(function () {
+        let user = {
+            username: $("#username").val(),
+            password: $("#password").val()
+        };
+
+        $.ajax({
+            url: "http://localhost:8888/login",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(user),
+            success: function (res) {
+                if (res === "success") {
+                    alert("登入成功");
+                    localStorage.setItem("login", "true");
+					localStorage.setItem("username", $("#username").val()); // ⭐ 新增這行：存下帳號
+                    window.location.href = "index.html";
+                } else {
+                    alert("帳密錯誤");
+                }
+            }
+        });
+    });
+    </script>
+
+</body>
+</html>

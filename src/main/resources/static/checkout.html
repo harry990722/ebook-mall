@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>結帳</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h1 style="text-align:center;">🧾 結帳頁</h1>
+
+<!-- 購物車列表 -->
+<table border="1" width="80%" style="margin:auto; text-align:center;">
+    <thead>
+        <tr>
+            <th>書名</th>
+            <th>價格</th>
+            <th>數量</th>
+            <th>小計</th>
+        </tr>
+    </thead>
+    <tbody id="checkout-list"></tbody>
+</table>
+
+<h2 style="text-align:center;">
+    總金額：NT$ <span id="totalPrice">0</span>
+</h2>
+
+<hr style="margin:30px;">
+
+<!-- 訂單資訊 -->
+<div style="width:300px; margin:auto;">
+    <h3>訂單資訊</h3>
+
+    <input type="text" id="name" placeholder="姓名"><br><br>
+    <input type="text" id="address" placeholder="地址"><br><br>
+
+    <button id="submitOrder">送出訂單</button>
+</div>
+
+<div style="text-align:center; margin-top:20px;">
+    <a href="cart.html">← 回購物車</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="js/checkout.js"></script>
+
+</body>
+</html>

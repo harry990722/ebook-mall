@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://mysql-182150c8-harry990722.e.aivencloud.com:23766/defaultdb?ssl-mode=REQUIRED
+    url: jdbc:mysql://mysql-2f1ec983-harry990722.i.aivencloud.com:23766/defaultdb?ssl-mode=REQUIRED
     username: avnadmin
-    password: AVNS_jX1anB1PcC6_Ktebsv3
+    password: AAVNS_kEZP2NjYYFIxuCMolrM
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   # 修正：jpa 必須在 spring 的下一層

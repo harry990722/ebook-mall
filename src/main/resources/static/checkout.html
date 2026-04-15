@@ -2,48 +2,116 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>結帳</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>結帳 - 電子書商城</title>
+    
+    <!-- ✅ 引用 Bootstrap -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    
+    <style>
+        body { background-color: #f8f9fa; font-family: "Microsoft JhengHei", sans-serif; }
+        .navbar { background-color: #212529 !important; margin-bottom: 40px; }
+        .nav-link, .navbar-brand { color: white !important; }
+
+        .checkout-container { max-width: 900px; margin: 0 auto 50px auto; }
+        .card { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        
+        /* 🔵 標題藍色側邊條樣式 */
+        .card-title { 
+            font-weight: bold; 
+            border-left: 5px solid #0d6efd; 
+            padding-left: 15px; 
+            margin-bottom: 25px; 
+            display: flex;
+            align-items: center;
+        }
+        
+        .total-price { color: #dc3545; font-weight: bold; font-size: 1.5rem; }
+
+        /* 🚀 解決黏在一起的關鍵：強制標籤換行並增加間距 */
+        .form-label { 
+            display: block;      /* 強制標籤自己佔一行 */
+            font-weight: 600; 
+            margin-bottom: 10px; /* 與輸入框拉開距離 */
+            color: #495057;
+        }
+
+        .form-control-lg {
+            border-radius: 8px;
+            width: 100%;        /* 讓輸入框填滿卡片寬度，更好看 */
+        }
+
+        /* 按鈕加寬並增加圓角 */
+        .btn-submit { 
+            width: 100%; 
+            border-radius: 50px; 
+            padding: 15px; 
+            font-weight: bold; 
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 
-<h1 style="text-align:center;">🧾 結帳頁</h1>
+    <div id="navbar"></div>
 
-<!-- 購物車列表 -->
-<table border="1" width="80%" style="margin:auto; text-align:center;">
-    <thead>
-        <tr>
-            <th>書名</th>
-            <th>價格</th>
-            <th>數量</th>
-            <th>小計</th>
-        </tr>
-    </thead>
-    <tbody id="checkout-list"></tbody>
-</table>
+    <div class="container checkout-container">
+        <h2 class="text-center mb-5 fw-bold">🧾 結帳確認</h2>
 
-<h2 style="text-align:center;">
-    總金額：NT$ <span id="totalPrice">0</span>
-</h2>
+        <!-- 商品清單 -->
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="card-title">商品清單</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle text-center">
+                        <thead>
+                            <tr class="text-secondary">
+                                <th>書名</th>
+                                <th>價格</th>
+                                <th>數量</th>
+                                <th>小計</th>
+                            </tr>
+                        </thead>
+                        <tbody id="checkout-list"></tbody>
+                    </table>
+                </div>
+                <hr>
+                <div class="text-end">
+                    <h4 class="mb-0">總金額：<span class="total-price">NT$ <span id="totalPrice">0</span></span></h4>
+                </div>
+            </div>
+        </div>
 
-<hr style="margin:30px;">
+        <!-- 收件資訊 -->
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="card-title">收件資訊</h4>
+                
+                <!-- 姓名區塊：mb-4 撐開與地址的距離 -->
+                <div class="mb-4">
+                    <label for="name" class="form-label">收件人姓名</label>
+                    <input type="text" id="name" class="form-control form-control-lg" placeholder="請輸入姓名">
+                </div>
 
-<!-- 訂單資訊 -->
-<div style="width:300px; margin:auto;">
-    <h3>訂單資訊</h3>
+                <!-- 地址區塊：mb-4 撐開與按鈕的距離 -->
+                <div class="mb-4">
+                    <label for="address" class="form-label">收件地址</label>
+                    <input type="text" id="address" class="form-control form-control-lg" placeholder="請輸入詳細送貨地址">
+                </div>
 
-    <input type="text" id="name" placeholder="姓名"><br><br>
-    <input type="text" id="address" placeholder="地址"><br><br>
+                <button id="submitOrder" class="btn btn-primary btn-submit shadow-sm">確認並送出訂單</button>
+                
+                <div class="text-center mt-4">
+                    <a href="cart.html" class="text-decoration-none text-secondary">← 返回購物車修改</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <button id="submitOrder">送出訂單</button>
-</div>
-
-<div style="text-align:center; margin-top:20px;">
-    <a href="cart.html">← 回購物車</a>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="js/checkout.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/checkout.js"></script>
+    <script src="js/navbar.js"></script>
 
 </body>
 </html>

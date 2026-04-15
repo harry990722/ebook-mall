@@ -2,21 +2,86 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>付款頁</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂單付款 - 電子書商城</title>
+    
+    <!-- ✅ 引用 Bootstrap 確保樣式與全站統一 -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    
+    <style>
+        body { background-color: #f8f9fa; font-family: "Microsoft JhengHei", sans-serif; }
+        
+        /* 🎨 導覽列深色主題 */
+        .navbar { background-color: #212529 !important; margin-bottom: 50px; }
+        .nav-link, .navbar-brand { color: white !important; }
+
+        /* 付款卡片樣式 */
+        .payment-container { 
+            max-width: 500px; 
+            margin: 60px auto; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+            text-align: center;
+        }
+
+        .amount-display {
+            font-size: 2.5rem;
+            color: #dc3545;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .btn-pay { 
+            width: 100%; 
+            border-radius: 50px; 
+            padding: 15px; 
+            font-weight: bold; 
+            font-size: 1.2rem;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+        }
+    </style>
 </head>
 <body>
 
-<h2>付款頁</h2>
+    <!-- ✅ 加入導覽列容器 (navbar.js 會自動填入) -->
+    <div id="navbar"></div>
 
-<p>訂單金額：NT$ <span id="amount"></span></p>
+    <div class="container">
+        <div class="payment-container">
+            <h2 class="fw-bold mb-4">💳 訂單付款</h2>
+            
+            <p class="text-secondary mb-1">本次結帳總金額</p>
+            <div class="amount-display">
+                NT$ <span id="amount">0</span>
+            </div>
 
-<button id="payBtn">付款</button>
+            <hr class="my-4">
 
-<!-- ⭐ 1️⃣ 先載入 jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <div class="alert alert-light text-start small">
+                請確認金額無誤後，點擊下方按鈕完成付款。
+            </div>
 
-<!-- ⭐ 2️⃣ 再載入你的 JS -->
-<script src="js/payment.js"></script>
+            <!-- 付款按鈕 -->
+            <button id="payBtn" class="btn btn-primary btn-pay shadow-sm">立即付款</button>
+            
+            <div class="mt-4">
+                <a href="index.html" class="text-decoration-none text-muted small">稍後再付，回首頁</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 引用腳本 (順序：jQuery -> payment.js -> navbar.js) -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/payment.js"></script> <!-- 負責抓取金額與處理付款邏輯 -->
+    <script src="js/navbar.js"></script> <!-- 負責渲染導覽列 -->
 
 </body>
 </html>

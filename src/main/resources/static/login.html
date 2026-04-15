@@ -2,18 +2,75 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>登入頁面</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員登入 - 電子書商城</title>
+    
+    <!-- ✅ 引用 Bootstrap -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    
+    <style>
+        body { background-color: #f8f9fa; font-family: "Microsoft JhengHei", sans-serif; }
+        
+        /* 🎨 導覽列深色主題 */
+        .navbar { background-color: #212529 !important; margin-bottom: 50px; }
+        .nav-link, .navbar-brand { color: white !important; }
+
+        /* 登入卡片：增加 padding 讓內部寬鬆一點 */
+        .login-container { 
+            max-width: 450px; 
+            margin: 60px auto; 
+            background: white; 
+            padding: 45px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        }
+
+        /* 加強標籤與輸入框的垂直感 */
+        .form-label { display: block; margin-bottom: 8px; font-weight: 600; }
+        
+        .btn-login { 
+            width: 100%; 
+            border-radius: 50px; 
+            padding: 12px; 
+            font-weight: bold; 
+            font-size: 1.1rem;
+            margin-top: 15px; 
+        }
+    </style>
 </head>
 <body>
 
-    <h2>登入</h2>
+    <!-- ✅ 導覽列 -->
+    <div id="navbar"></div>
 
-    <input type="text" id="username" placeholder="帳號"><br>
-    <input type="password" id="password" placeholder="密碼"><br>
+    <div class="container">
+        <div class="login-container">
+            <h2 class="text-center mb-5 fw-bold">會員登入</h2>
+            
+            <!-- 帳號區塊：使用 mb-4 撐開與下方密碼的距離 -->
+            <div class="mb-4">
+                <label for="username" class="form-label">帳號</label>
+                <input type="text" id="username" class="form-control form-control-lg" placeholder="請輸入帳號">
+            </div>
+            
+            <!-- 密碼區塊：使用 mb-4 撐開與下方按鈕的距離 -->
+            <div class="mb-4">
+                <label for="password" class="form-label">密碼</label>
+                <input type="password" id="password" class="form-control form-control-lg" placeholder="請輸入密碼">
+            </div>
 
-    <button id="loginBtn">登入</button>
+            <!-- 登入按鈕 -->
+            <button id="loginBtn" class="btn btn-primary btn-login shadow-sm">立即登入</button>
+            
+            <div class="text-center mt-4">
+                <a href="register.html" class="text-decoration-none text-secondary small">還沒有帳號？ <span class="text-primary">前往註冊</span></a>
+            </div>
+        </div>
+    </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- ✅ 引用腳本 -->
+    <script src="js/jquery.min.js"></script>
+    
     <script>
     $("#loginBtn").click(function () {
         let user = {
@@ -30,15 +87,21 @@
                 if (res === "success") {
                     alert("登入成功");
                     localStorage.setItem("login", "true");
-					localStorage.setItem("username", $("#username").val()); // ⭐ 新增這行：存下帳號
+                    localStorage.setItem("username", $("#username").val()); 
                     window.location.href = "index.html";
                 } else {
                     alert("帳密錯誤");
                 }
+            },
+            error: function() {
+                alert("伺服器連線失敗，請檢查後端是否啟動");
             }
         });
     });
     </script>
+
+    <!-- ✅ 渲染導覽列 -->
+    <script src="js/navbar.js"></script>
 
 </body>
 </html>

@@ -1,11 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
-    <meta charset="UTF-8"> <!-- 加上這一行就解決了！ -->
-    <title>訂單完成</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂單完成 - 電子書商城</title>
+    
+    <!-- ✅ 引用 Bootstrap -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    
+    <style>
+        body { background-color: #f8f9fa; font-family: "Microsoft JhengHei", sans-serif; }
+        
+        /* 🎨 導覽列深色主題 */
+        .navbar { background-color: #212529 !important; margin-bottom: 50px; }
+        .nav-link, .navbar-brand { color: white !important; }
+
+        /* 完成頁面卡片 */
+        .success-container { 
+            max-width: 550px; 
+            margin: 80px auto; 
+            background: white; 
+            padding: 60px 40px; /* 增加上下內距 */
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 25px;
+            display: block;
+        }
+
+        /* 🚀 修正重點：增加按鈕的上下外距 (margin)，徹底分開文字 */
+        .btn-home { 
+            display: inline-block; /* 確保 margin 有效 */
+            border-radius: 50px; 
+            padding: 15px 50px; 
+            font-weight: bold; 
+            font-size: 1.1rem;
+            margin-top: 40px;    /* 跟上面文字分開 */
+            margin-bottom: 20px; /* 跟下面文字分開 */
+            text-decoration: none;
+        }
+
+        /* 讓最下方的連結有獨立空間 */
+        .footer-link {
+            margin-top: 15px;
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <h2>🎉 訂單完成！</h2>
-    <a href="index.html">回首頁</a>
+
+    <!-- ✅ 預留導覽列容器 -->
+    <div id="navbar"></div>
+
+    <div class="container">
+        <div class="success-container">
+            <span class="success-icon">🎉</span>
+            <h2 class="fw-bold mb-3">訂單已完成！</h2>
+            <p class="text-secondary mb-2">感謝您的購買，您的電子書已準備好供您閱讀。</p>
+            <p class="text-secondary">我們已將訂單細節發送至您的會員信箱。</p>
+            
+            <!-- 回首頁按鈕：加入 btn-primary 與 shadow -->
+            <a href="index.html" class="btn btn-primary btn-home shadow-sm">返回商城首頁</a>
+            
+            <!-- 🚀 將下方連結獨立出來 -->
+            <div class="footer-link">
+                <a href="orders.html" class="text-decoration-none text-muted small">查看我的訂單紀錄</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 引用腳本 -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/navbar.js"></script>
+
 </body>
 </html>

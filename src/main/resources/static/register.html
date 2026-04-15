@@ -2,21 +2,77 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>註冊</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員註冊 - 電子書商城</title>
+    
+    <!-- ✅ 引用 Bootstrap 確保全站風格統一 -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    
+    <style>
+        body { background-color: #f8f9fa; font-family: "Microsoft JhengHei", sans-serif; }
+        
+        /* 🎨 導覽列深色主題樣式 */
+        .navbar { background-color: #212529 !important; margin-bottom: 50px; }
+        .nav-link, .navbar-brand { color: white !important; }
+
+        /* 註冊卡片：增加內距與圓角，讓視覺更寬鬆 */
+        .register-container { 
+            max-width: 450px; 
+            margin: 60px auto; 
+            background: white; 
+            padding: 45px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        }
+
+        .form-label { font-weight: 600; margin-bottom: 8px; }
+        
+        /* 註冊按鈕：大尺寸、圓角、增加上方間距 */
+        .btn-register { 
+            width: 100%; 
+            border-radius: 50px; 
+            padding: 12px; 
+            font-weight: bold; 
+            font-size: 1.1rem;
+            margin-top: 15px; 
+        }
+    </style>
 </head>
 <body>
 
-<h2>註冊</h2>
+    <!-- ✅ 1. 加入導覽列容器 (navbar.js 會自動填入內容) -->
+    <div id="navbar"></div>
 
-<input type="text" id="username" placeholder="帳號"><br><br>
-<input type="password" id="password" placeholder="密碼"><br><br>
+    <div class="container">
+        <div class="register-container">
+            <h2 class="text-center mb-5 fw-bold">會員註冊</h2>
+            
+            <!-- 帳號區塊：使用 mb-4 分開 -->
+            <div class="mb-4">
+                <label for="username" class="form-label">設定帳號</label>
+                <input type="text" id="username" class="form-control form-control-lg" placeholder="請輸入欲註冊的帳號">
+            </div>
+            
+            <!-- 密碼區塊：使用 mb-4 分開 -->
+            <div class="mb-4">
+                <label for="password" class="form-label">設定密碼</label>
+                <input type="password" id="password" class="form-control form-control-lg" placeholder="請輸入密碼">
+            </div>
 
-<button id="registerBtn">註冊</button>
+            <!-- 註冊按鈕 -->
+            <button id="registerBtn" class="btn btn-success btn-register shadow-sm">立即註冊</button>
+            
+            <div class="text-center mt-4">
+                <span class="text-secondary small">已有帳號？</span>
+                <a href="login.html" class="text-decoration-none small fw-bold">前往登入</a>
+            </div>
+        </div>
+    </div>
 
-<p>已有帳號？<a href="login.html">去登入</a></p>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="js/register.js"></script>
+    <!-- ✅ 2. 依序引用腳本 -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/register.js"></script> <!-- 這裡面應該包含你的 AJAX 註冊邏輯 -->
+    <script src="js/navbar.js"></script> <!-- 負責顯示導覽列 -->
 
 </body>
 </html>

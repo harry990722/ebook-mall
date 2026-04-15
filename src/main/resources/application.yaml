@@ -8,10 +8,15 @@ spring:
     password: AVNS_jX1anB1PcC6_Ktebsv3
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-jpa:
-  hibernate:
-    ddl-auto: update
-  show-sql: true
+  # 修正：jpa 必須在 spring 的下一層
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    # 增加這行可以確保 Hibernate 使用正確的 MySQL 語法
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
 
 logging:
   level:

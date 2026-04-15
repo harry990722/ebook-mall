@@ -3,12 +3,16 @@ server:
 
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://mysql-182150c8-harry990722.e.aivencloud.com:23766/defaultdb?ssl-mode=REQUIRED
+    username: avnadmin
+    password: AVNS_jX1anB1PcC6_Ktebsv3
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+jpa:
+  hibernate:
+    ddl-auto: update
+  show-sql: true
+
+logging:
+  level:
+    com.zaxxer.hikari: DEBUG

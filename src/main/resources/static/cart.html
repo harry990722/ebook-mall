@@ -5,12 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的購物車 - 電子書商城</title>
     
-    <!-- ✅ 讀取與首頁相同的本地 CSS -->
+    <!-- ✅ 讀取本地 CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     
     <style>
         body { background-color: #f8f9fa; font-family: "Microsoft JhengHei", sans-serif; }
-        .cart-container { max-width: 900px; margin: 50px auto; background: white; padding: 30px; border-radius: 15px; shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        
+        /* 🎨 為了統一風格，加入與 index.html 相同的導覽列樣式 */
+        .navbar { background-color: #212529 !important; margin-bottom: 30px; }
+        .nav-link { color: white !important; font-size: 14px; }
+        .navbar-brand { color: white !important; }
+
+        .cart-container { max-width: 900px; margin: 50px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .table thead { background-color: #f1f3f5; }
         .total-section { border-top: 2px solid #dee2e6; padding-top: 20px; margin-top: 20px; }
         .btn-checkout { padding: 10px 40px; font-size: 1.1rem; border-radius: 50px; }
@@ -18,12 +24,8 @@
 </head>
 <body>
 
-    <!-- 簡易導覽列 -->
-    <nav class="navbar navbar-dark bg-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">📚 返回商城</a>
-        </div>
-    </nav>
+    <!-- ✅ 修改重點 1：改用空的 div，讓 navbar.js 自動填入含有登入資訊的導覽列 -->
+    <div id="navbar"></div>
 
     <div class="container">
         <div class="cart-container shadow-sm">
@@ -58,9 +60,10 @@
         </div>
     </div>
 
-    <!-- ✅ 讀取本地的 JS 檔案 -->
+    <!-- ✅ 修改重點 2：依序讀取腳本 -->
     <script src="js/jquery.min.js"></script>
     <script src="js/cart.js"></script>
+    <script src="js/navbar.js"></script> <!-- ⭐ 負責動態產生導覽列與處理登入/登出 -->
 
 </body>
 </html>

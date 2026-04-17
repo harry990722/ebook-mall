@@ -1,9 +1,7 @@
 $(document).ready(function () {
-    // ⭐ 只留這個
     loadProducts();
 });
 
-// 💡 商品列表
 function loadProducts() {
     $.ajax({
         url: "/products",
@@ -12,26 +10,26 @@ function loadProducts() {
             $("#product-list").empty();
 
             data.forEach(product => {
+
+                // ⭐ 隨機書本圖片（你也可以改成資料庫圖片）
+                let img = getBookImage(product.title);
+
                 let html = `
-                    <div class="col-md-3 mb-5">
-                        <div class="card h-100 border-0" onclick="goDetail(${product.id})" style="cursor:pointer">
-                            <div class="card-img-placeholder mb-2" style="background:#f5f5f5; padding:40px; border-radius:8px; text-align:center;">
-                                <span style="font-size:60px;">📖</span>
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100" onclick="goDetail(${product.id})" style="cursor:pointer">
+
+                            <img src="${img}" class="book-img">
+
+                            <div class="card-body">
+                                <h6 class="fw-bold">${product.title}</h6>
+                                <p class="text-muted small">作者：${product.author}</p>
+                                <div class="price">NT$ ${product.price}</div>
                             </div>
-                            <div class="card-body p-0">
-                                <h5 class="card-title fw-bold mb-1" style="font-size:15px;">
-                                    ${product.title}
-                                </h5>
-                                <p class="card-text text-muted small mb-2">作者：${product.author}</p>
-                                <div>
-                                    <span style="color:#d00; font-size:16px;">
-                                        NT$ ${product.price}
-                                    </span>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 `;
+
                 $("#product-list").append(html);
             });
         },
@@ -41,7 +39,23 @@ function loadProducts() {
     });
 }
 
-// 跳轉
+// ⭐ 書本圖片（重點🔥）
+function getBookImage(title) {
+
+    if (title.includes("Java")) {
+        return "https://images.unsplash.com/photo-1515879218367-8466d910aaa4";
+    }
+    if (title.includes("Spring")) {
+        return "https://images.unsplash.com/photo-1555066931-4365d14bab8c";
+    }
+    if (title.includes("前端")) {
+        return "https://images.unsplash.com/photo-1498050108023-c5249f4df085";
+    }
+
+    // 預設
+    return "https://images.unsplash.com/photo-1512820790803-83ca734da794";
+}
+
 function goDetail(id) {
     window.location.href = "product.html?id=" + id;
 }

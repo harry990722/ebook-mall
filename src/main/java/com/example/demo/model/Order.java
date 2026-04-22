@@ -26,7 +26,8 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
     
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // 1. 改成 EAGER 立即抓取
+    @JsonManagedReference // 2. 防止與 OrderItem 產生無限遞迴迴圈
     private List<OrderItem> items;
 
     // ⭐ 必備無參數建構子

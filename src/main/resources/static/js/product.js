@@ -1,19 +1,21 @@
-// ⭐ 圖片邏輯（跟首頁一致）
 function getBookImage(title) {
-    if (!title) {
-        return "https://unsplash.com";
-    }
+
     if (title.includes("Java")) {
-        return "https://unsplash.com";
+        return "https://images.unsplash.com/photo-1515879218367-8466d910aaa4";
     }
     if (title.includes("Spring")) {
-        return "https://unsplash.com";
+        return "https://images.unsplash.com/photo-1555066931-4365d14bab8c";
     }
     if (title.includes("前端")) {
-        return "https://unsplash.com";
+        return "https://images.unsplash.com/photo-1498050108023-c5249f4df085";
     }
-    // 預設圖片
-    return "https://unsplash.com";
+
+    // 預設
+    return "https://images.unsplash.com/photo-1512820790803-83ca734da794";
+}
+
+function goDetail(id) {
+    window.location.href = "product.html?id=" + id;
 }
 
 $(document).ready(function () {
@@ -135,4 +137,4 @@ $(document).ready(function () {
 	        }
 	    });
 	}
-}
+});

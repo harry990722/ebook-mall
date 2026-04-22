@@ -1,23 +1,14 @@
-server:
-  port: ${PORT:10000}
-
 spring:
-  datasource:
-    url: jdbc:mysql://mysql-2f1ec983-harry990722.i.aivencloud.com:23766/defaultdb?ssl-mode=REQUIRED
-    username: avnadmin
-    password: AVNS_kEZP2NjYYFIxuCMolrM
-    driver-class-name: com.mysql.cj.jdbc.Driver
+ datasource:
+   url: jdbc:mysql://localhost:3306/ebook
+   username: root
+   password: 1234
 
-  # 修正：jpa 必須在 spring 的下一層
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    # 增加這行可以確保 Hibernate 使用正確的 MySQL 語法
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+ jpa:
+   hibernate:
+     ddl-auto: update
+   show-sql: true
 
-logging:
-  level:
-    com.zaxxer.hikari: DEBUG
+server:
+  port: 8888
+  

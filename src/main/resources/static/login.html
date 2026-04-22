@@ -79,12 +79,14 @@
         };
 
         $.ajax({
-            url: "/login",
+            // 這裡改成相對路徑，它會自動抓 https://onrender.com
+            url: "/login", 
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify(user),
             success: function (res) {
-                if (res === "success") {
+                // 這裡要注意：後端回傳通常是 "success" 字串或物件
+                if (res === "success" || res.message === "success") {
                     alert("登入成功");
                     localStorage.setItem("login", "true");
                     localStorage.setItem("username", $("#username").val()); 
@@ -93,8 +95,9 @@
                     alert("帳密錯誤");
                 }
             },
-            error: function() {
-                alert("伺服器連線失敗，請檢查後端是否啟動");
+            error: function(xhr) {
+                console.log(xhr); // 在控制台看具體錯誤
+                alert("伺服器連線失敗，請檢查後端是否啟動或資料庫連線");
             }
         });
     });

@@ -7,15 +7,18 @@ spring:
     username: avnadmin
     password: AVNS_kEZP2NjYYFIxuCMolrM
     driver-class-name: com.mysql.cj.jdbc.Driver
-  # 修正：jpa 必須在 spring 的下一層
+  
   jpa:
+    # ⭐ 1. 解決第一個警告：將 open-in-view 設為 false
+    open-in-view: false
     hibernate:
       ddl-auto: update
     show-sql: true
-    # 增加這行可以確保 Hibernate 使用正確的 MySQL 語法
+    # ⭐ 2. 解決第二個警告：刪除原本手動指定的 dialect (已幫你移除)
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+        # 如果沒有特殊需求，這裡可以留空，讓 Spring 自動偵測
+
 logging:
   level:
     com.zaxxer.hikari: DEBUG

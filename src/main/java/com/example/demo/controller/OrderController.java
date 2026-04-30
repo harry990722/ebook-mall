@@ -1,13 +1,16 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Order;
+import com.example.demo.model.OrderItem;
 import com.example.demo.model.User;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import com.example.demo.model.OrderItem;
 
 @RestController
 @CrossOrigin
@@ -19,49 +22,77 @@ public class OrderController {
     @Autowired
     private UserRepository userRepo;
 
-    // ⭐ 建立訂單
-    // ⭐ 建立訂單 (更新版本)
-    @PostMapping("/order")
-    public Order createOrder(@RequestBody Order order) {
+    // ===== 共用：從 Authorization Header 解析 username =====
+    private String extractUsername(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return null;
+        String token = authHeader.substring(7);
+        return JwtUtil.getUsernameFromToken(token); // 無效或過期回傳 null
+    }
 
-        // 1. 從前端拿 username 並關聯 User
-        String username = order.getUsername();
-        User user = userRepo.findByUsername(username).orElse(null);
-        if (user != null) {
-            order.setUser(user);
+    // ⭐ 建立訂單
+    @PostMapping("/order")
+    public ResponseEntity<?> createOrder(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestBody Order order) {
+
+        String username = extractUsername(authHeader);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 無效，請重新登入");
         }
 
-        // 2. 設定訂單初始狀態
+        User user = userRepo.findByUsername(username).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("使用者不存在");
+        }
+
+        order.setUser(user);
+        order.setUsername(username);
         order.setStatus("pending");
 
-        // 3. ⭐ 關鍵：建立雙向關聯
-        // 必須讓每個 OrderItem 知道它屬於哪一個 Order，資料庫才能正確寫入外鍵 (order_id)
         if (order.getItems() != null) {
             for (OrderItem item : order.getItems()) {
                 item.setOrder(order);
             }
         }
 
-        // 4. 儲存訂單（因為 Order 設有 CascadeType.ALL，也會一併儲存 OrderItems）
-        return orderRepo.save(order);
+        return ResponseEntity.ok(orderRepo.save(order));
     }
-
 
     // ⭐ 付款
     @PutMapping("/order/pay/{id}")
-    public Order payOrder(@PathVariable Long id) {
+    public ResponseEntity<?> payOrder(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @PathVariable Long id) {
 
-        Order order = orderRepo.findById(id).orElse(null);
-
-        if (order != null) {
-            order.setStatus("paid");
-            return orderRepo.save(order);
+        String username = extractUsername(authHeader);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 無效，請重新登入");
         }
 
-        return null;
+        Order order = orderRepo.findById(id).orElse(null);
+        if (order == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("找不到訂單");
+        }
+
+        if (order.getUser() == null || !order.getUser().getUsername().equals(username)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("無權限操作此訂單");
+        }
+
+        order.setStatus("paid");
+        return ResponseEntity.ok(orderRepo.save(order));
     }
+
+    // ⭐ 查詢我的訂單
     @GetMapping("/my-orders")
-    public List<Order> getMyOrders(@RequestParam String username) {
-        return orderRepo.findByUserUsername(username);
+    public ResponseEntity<?> getMyOrders(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+
+        String username = extractUsername(authHeader);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 無效，請重新登入");
+        }
+
+        List<Order> orders = orderRepo.findByUserUsername(username);
+        return ResponseEntity.ok(orders);
     }
 }

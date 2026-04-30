@@ -1,108 +1,277 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>電子書商城</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電子書書城</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap');
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    body { 
+        background-color: #fafaf8; 
+        font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; 
+        color: #2c2c2c; 
+    }
 
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: "Microsoft JhengHei", sans-serif;
-        }
+    /* ===== Banner ===== */
+    .banner-container { 
+        width: 100%;
+        height: 420px; 
+        overflow: hidden; 
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        position: relative;
+    }
 
-        /* ⭐ 導覽列 */
-        .navbar {
-            background-color: #212529 !important;
-        }
+    .carousel-inner, .carousel-item {
+        width: 100%;
+        height: 100%;
+    }
 
-        /* ⭐ Banner */
-        .banner {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
-            border-radius: 12px;
-            margin-top: 20px;
-        }
+    .carousel-item img { 
+        width: 100% !important;
+        height: 420px; 
+        object-fit: cover;
+        filter: brightness(0.75);
+    }
 
-        .banner h1 {
-            font-weight: bold;
-            font-size: 36px;
-        }
+    /* Banner 文字覆蓋 */
+    .banner-caption {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        padding: 40px 50px;
+        background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+        color: white;
+        z-index: 10;
+        pointer-events: none;
+    }
+    .banner-caption h2 {
+        font-family: 'Noto Serif TC', serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+        letter-spacing: 2px;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        line-height: 1.3;
+    }
+    .banner-caption p {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin: 0;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
 
-        .banner p {
-            font-size: 18px;
-            opacity: 0.9;
-        }
+    /* Banner 指示點 — 移到右下角，避免與文字重疊 */
+    .carousel-indicators {
+        bottom: 16px;
+        justify-content: flex-end;
+        padding-right: 20px;
+        margin: 0;
+        z-index: 11;
+    }
+    .carousel-indicators [data-bs-target] {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background-color: rgba(255,255,255,0.5);
+        border: none;
+    }
+    .carousel-indicators .active { background-color: #fff; }
 
-        /* ⭐ 區塊標題 */
-        .section-title {
-            color: #333;
-            font-weight: bold;
-            margin: 40px 0 20px;
-            border-left: 5px solid #ff6600;
-            padding-left: 10px;
-        }
+    /* ===== 區塊標題 ===== */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin: 48px 0 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .section-title { 
+        font-family: 'Noto Serif TC', serif;
+        font-size: 1.4rem; 
+        font-weight: 700;
+        letter-spacing: 1px;
+        position: relative;
+    }
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: -14px; top: 50%;
+        transform: translateY(-50%);
+        width: 4px; height: 18px;
+        background: #c0392b;
+        border-radius: 2px;
+    }
 
-        /* ⭐ 卡片設計 */
-        .card {
-            border: none;
-            border-radius: 12px;
-            transition: all 0.25s ease;
-            background: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
+    /* ===== 搜尋與分類 ===== */
+    .control-panel { 
+        background: #fff; 
+        padding: 20px 24px; 
+        border-radius: 12px; 
+        margin-bottom: 32px;
+        border: 1px solid #ebebeb;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .filter-btn { 
+        border-radius: 50px; 
+        padding: 6px 20px; 
+        font-size: 0.88rem; 
+        margin-right: 6px;
+        transition: all 0.2s;
+    }
+    #searchInput {
+        border-radius: 50px;
+        border: 1px solid #ddd;
+        padding-left: 18px;
+        background: #fafaf8;
+    }
+    #searchInput:focus { 
+        box-shadow: 0 0 0 3px rgba(192,57,43,0.12);
+        border-color: #c0392b;
+    }
 
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
+    /* ===== 商品卡片 ===== */
+    .product-card {
+        border: 1px solid transparent;
+        padding: 10px;
+        transition: all 0.25s ease;
+        cursor: pointer;
+        height: 100%;
+        border-radius: 10px;
+        background: #fff;
+    }
+    .product-card:hover { 
+        border-color: #e8e8e8;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        transform: translateY(-3px);
+    }
+    
+    .img-wrap {
+        width: 100%;
+        aspect-ratio: 3/4;
+        background: #f1f1f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+        border-radius: 6px;
+    }
+    .product-img { 
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    .product-card:hover .product-img { transform: scale(1.04); }
 
-        /* ⭐ 書本圖片 */
-        .book-img {
-            height: 180px;
-            object-fit: cover;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-        }
+    .discount {
+        position: absolute; top: 10px; left: 10px;
+        background: #c0392b; color: #fff;
+        padding: 3px 10px; font-size: 11px; 
+        border-radius: 50px;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        z-index: 5;
+    }
 
-        /* ⭐ 價格 */
-        .price {
-            color: #e60023;
-            font-size: 18px;
-            font-weight: bold;
-        }
+    .book-title { 
+        font-weight: 700; 
+        font-size: 0.92rem; 
+        margin-top: 12px; 
+        height: 2.8em; 
+        overflow: hidden;
+        line-height: 1.4;
+        color: #1a1a1a;
+    }
+    .book-author {
+        font-size: 0.78rem;
+        color: #999;
+        margin-top: 3px;
+    }
+    .price-now { color: #c0392b; font-weight: bold; font-size: 1.05rem; }
+    .price-old { color: #bbb; text-decoration: line-through; font-size: 0.82rem; margin-left: 5px; }
 
-        .container {
-            max-width: 1140px;
-        }
-    </style>
+    /* ===== Footer 間距 ===== */
+    .page-footer {
+        margin-top: 60px;
+        padding: 30px 0;
+        border-top: 1px solid #ebebeb;
+        text-align: center;
+        color: #bbb;
+        font-size: 0.85rem;
+    }
+</style>
 </head>
 <body>
 
-<!-- Navbar -->
 <div id="navbar"></div>
 
 <div class="container">
+    <!-- Banner -->
+    <div id="heroBanner" class="carousel slide banner-container mt-4" data-bs-ride="carousel" data-bs-interval="4000">
 
-    <!-- ⭐ Banner -->
-    <div class="banner">
-        <h1>📚 電子書商城</h1>
-        <p>精選技術書籍｜Java・Spring Boot・前端開發</p>
+        <!-- 指示點 -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroBanner" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#heroBanner" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#heroBanner" data-bs-slide-to="2"></button>
+        </div>
+
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=1400&q=80" class="d-block w-100" alt="書城精選">
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=1400&q=80" class="d-block w-100" alt="新書上架">
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=1400&q=80" class="d-block w-100" alt="限時優惠">
+            </div>
+        </div>
+
+        <!-- ⭐ caption 移到 carousel-inner 外，直接貼在 banner-container 上，不跟著輪播移動 -->
+        <div class="banner-caption">
+            <h2>📚 電子書商城精選好書</h2>
+            <p>技術・商業・心理學，每本都是你的競爭力</p>
+        </div>
     </div>
 
-    <!-- ⭐ 商品標題 -->
-    <h5 class="section-title">熱門商品</h5>
+    <div class="section-header">
+        <div class="section-title">新書焦點</div>
+    </div>
+
+    <!-- 搜尋與分類 -->
+    <div class="control-panel">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-dark filter-btn" data-type="all">全部</button>
+                    <button class="btn btn-outline-dark filter-btn" data-type="tech">技術</button>
+                    <button class="btn btn-outline-dark filter-btn" data-type="business">商業</button>
+                    <button class="btn btn-outline-dark filter-btn" data-type="mind">心理</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <input type="text" id="searchInput" class="form-control" placeholder="🔍 搜尋您感興趣的書籍...">
+            </div>
+        </div>
+    </div>
 
     <!-- 商品列表 -->
-    <div id="product-list" class="row"></div>
+    <div class="row" id="product-list"></div>
+	<!-- ⭐ 推薦區 -->
+	<div class="section-header">
+	    <div class="section-title">編輯推薦</div>
+	</div>
+	<div class="row" id="product-list-2"></div>
 
+    <div class="page-footer">© 2026 電子書商城 · 閱讀，讓你走得更遠</div>
 </div>
 
 <script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
 <script src="js/index.js"></script>
 <script src="js/navbar.js"></script>
 

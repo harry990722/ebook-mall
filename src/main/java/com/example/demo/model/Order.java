@@ -15,7 +15,8 @@ public class Order {
     private String name;
     private String address;
     private int total;
-    private String status; // pending / paid
+    private String status;   // pending / paid
+    private String payment;  // credit / cod / linepay
 
     @Transient
     private String username;
@@ -44,6 +45,9 @@ public class Order {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getPayment() { return payment; }
+    public void setPayment(String payment) { this.payment = payment; }
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }

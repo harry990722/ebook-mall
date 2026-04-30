@@ -70,40 +70,8 @@
 
     <!-- ✅ 引用腳本 -->
     <script src="js/jquery.min.js"></script>
-    
-    <script>
-    $("#loginBtn").click(function () {
-        let user = {
-            username: $("#username").val(),
-            password: $("#password").val()
-        };
-
-        $.ajax({
-            // 這裡改成相對路徑，它會自動抓 https://onrender.com
-            url: "/login", 
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(user),
-            success: function (res) {
-                // 這裡要注意：後端回傳通常是 "success" 字串或物件
-                if (res === "success" || res.message === "success") {
-                    alert("登入成功");
-                    localStorage.setItem("login", "true");
-                    localStorage.setItem("username", $("#username").val()); 
-                    window.location.href = "index.html";
-                } else {
-                    alert("帳密錯誤");
-                }
-            },
-            error: function(xhr) {
-                console.log(xhr); // 在控制台看具體錯誤
-                alert("伺服器連線失敗，請檢查後端是否啟動或資料庫連線");
-            }
-        });
-    });
-    </script>
-
-    <!-- ✅ 渲染導覽列 -->
+	<script src="js/common.js"></script>
+    <script src="js/login.js"></script>
     <script src="js/navbar.js"></script>
 
 </body>

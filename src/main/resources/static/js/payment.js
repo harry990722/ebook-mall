@@ -1,43 +1,47 @@
 $(document).ready(function () {
+    // ⭐ 登入檢查
+    if (!localStorage.getItem("username")) {
+        alert("請先登入！");
+        window.location.href = "login.html";
+        return;
+    }
 
-    // 從 localStorage 取得 checkout.js 存入的資料
+    // 從 localStorage 取得結帳金額與訂單 ID
     let total = localStorage.getItem("total");
     let orderId = localStorage.getItem("orderId");
 
-    // 檢查資料是否存在，若無則跳回首頁
+    // ⭐ 訂單資料不存在時導回首頁，不讓使用者卡在付款頁
     if (!total || !orderId) {
-        $("#amount").text("資料讀取中...");
-        console.error("找不到訂單資料");
-    } else {
-        $("#amount").text(total);
+        alert("找不到訂單資料，請重新操作！");
+        window.location.href = "index.html";
+        return;
     }
 
-    $("#payBtn").click(function () {
+    $("#amount").text(total);
 
+    $("#payBtn").click(function () {
         if (!orderId) {
             alert("訂單資訊已失效，請重新操作！");
             window.location.href = "index.html";
             return;
         }
 
-        // 呼叫後端付款 API
+        // 呼叫後端付款 API（帶上 username 供後端驗證身份）
+        let username = localStorage.getItem("username");
         $.ajax({
-            url: "/order/pay/" + orderId,
+            url: "/order/pay/" + orderId + "?username=" + encodeURIComponent(username),
             method: "PUT",
+            headers: authHeader(),
             success: function () {
-                alert("付款成功！感謝您的訂購。");
+                alert("🎉 付款成功！感謝您的訂購。");
 
-                // ⭐ 成功付款後：清空後端購物車快取
-                $.ajax({
-                    url: "/cart/clear",
-                    method: "DELETE",
-                    complete: function() {
-                        // 無論清空成功與否，都清除本地暫存並跳轉
-                        localStorage.removeItem("orderId");
-                        localStorage.removeItem("total");
-                        window.location.href = "success.html";
-                    }
-                });
+                // ⭐ 重點修正：付款成功後，直接清空瀏覽器的購物車資料
+                localStorage.removeItem("cart");     // 清空購物車項目
+                localStorage.removeItem("orderId");  // 清除當前處理的訂單ID
+                localStorage.removeItem("total");    // 清除當前處理的金額
+
+                // 跳轉至成功頁面
+                window.location.href = "success.html";
             },
             error: function (err) {
                 console.error("付款請求失敗:", err);

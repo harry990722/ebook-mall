@@ -1,24 +1,14 @@
-server:
-  port: ${PORT:10000}
-
 spring:
-  datasource:
-    url: jdbc:mysql://mysql-2f1ec983-harry990722.i.aivencloud.com:23766/defaultdb?ssl-mode=REQUIRED
-    username: avnadmin
-    password: AVNS_kEZP2NjYYFIxuCMolrM
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  
-  jpa:
-    # ⭐ 1. 解決第一個警告：將 open-in-view 設為 false
-    open-in-view: false
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    # ⭐ 2. 解決第二個警告：刪除原本手動指定的 dialect (已幫你移除)
-    properties:
-      hibernate:
-        # 如果沒有特殊需求，這裡可以留空，讓 Spring 自動偵測
+ datasource:
+   url: jdbc:mysql://localhost:3306/ebook
+   username: root
+   password: 1234
 
-logging:
-  level:
-    com.zaxxer.hikari: DEBUG
+ jpa:
+   hibernate:
+     ddl-auto: update
+   show-sql: true
+
+server:
+  port: 8888
+  

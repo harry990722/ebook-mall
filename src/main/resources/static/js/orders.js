@@ -8,33 +8,42 @@ $(document).ready(function () {
         return;
     }
 
+    // ⭐ 狀態中文對應
+    function statusLabel(status) {
+        const map = {
+            "pending":   '<span class="badge bg-warning text-dark badge-status">待付款</span>',
+            "paid":      '<span class="badge bg-success badge-status">已付款</span>',
+            "shipped":   '<span class="badge bg-info text-dark badge-status">已出貨</span>',
+            "completed": '<span class="badge bg-primary badge-status">已完成</span>',
+            "cancelled": '<span class="badge bg-secondary badge-status">已取消</span>'
+        };
+        return map[status] || `<span class="badge bg-secondary badge-status">${status}</span>`;
+    }
+
     $.ajax({
-        url: "/my-orders?username=" + username,
+        url: "/my-orders",
         method: "GET",
+        headers: authHeader(),
 
         success: function (orders) {
 
             $("#order-list").empty();
 
+            if (orders.length === 0) {
+                $("#order-list").append('<tr><td colspan="5" class="text-center text-muted py-4">尚無訂單紀錄</td></tr>');
+                return;
+            }
+
             orders.forEach(order => {
-
-                // ⭐ 加入這段：遍歷每一筆訂單裡的商品項目
-                if (order.items) {
-                    order.items.forEach(item => {
-                        console.log("訂單編號 " + order.id + " 的商品：" + item.title);
-                    });
-                }
-
                 let html = `
                     <tr>
-                        <td>${order.id}</td>
+                        <td class="px-3">${order.id}</td>
                         <td>${order.name}</td>
                         <td>${order.address}</td>
                         <td>NT$ ${order.total}</td>
-                        <td>${order.status}</td>
+                        <td class="text-center">${statusLabel(order.status)}</td>
                     </tr>
                 `;
-
                 $("#order-list").append(html);
             });
 

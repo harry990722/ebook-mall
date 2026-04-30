@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Product;
-import com.example.demo.model.OrderItem;
+import jakarta.annotation.PostConstruct;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,13 +10,26 @@ import java.util.List;
 @CrossOrigin
 public class ProductController {
 
-    List<Product> products = new ArrayList<>();
-    List<OrderItem> cart = new ArrayList<>();
+    private List<Product> products = new ArrayList<>();
 
-    public ProductController() {
-        products.add(new Product(1, "Java 入門", "張小明", 299));
-        products.add(new Product(2, "Spring Boot 實戰", "王大明", 399));
-        products.add(new Product(3, "前端開發指南", "李小華", 199));
+    // ⭐ 改用 @PostConstruct：Spring 元件初始化完成後才執行，是標準寫法
+    @PostConstruct
+    public void init() {
+        // --- 類別 1: 新書焦點 (ID 1-6) ---
+        products.add(new Product(1, "Java 21 程式開發實戰", "張小明", 450));
+        products.add(new Product(2, "Spring Boot 3 核心技術", "王大同", 520));
+        products.add(new Product(3, "現代前端框架開發指南", "李小華", 380));
+        products.add(new Product(4, "微服務架構設計與實踐", "林志強", 600));
+        products.add(new Product(5, "Docker + Kubernetes 雲端部署", "黃大牛", 480));
+        products.add(new Product(6, "Python 資料科學入門", "趙小雲", 350));
+
+        // --- 類別 2: 主題選讀 (ID 7-12) ---
+        products.add(new Product(7, "致富心態：掌握財富心理", "摩根·豪瑟", 320));
+        products.add(new Product(8, "原子習慣：細微改變帶來巨大成就", "詹姆斯·克利爾", 280));
+        products.add(new Product(9, "深度工作力：在淺薄時代生存", "卡爾·紐波特", 300));
+        products.add(new Product(10, "原則：生活與工作", "雷·達里歐", 450));
+        products.add(new Product(11, "思考的藝術：52個邏輯錯誤", "魯爾夫．多伯里", 250));
+        products.add(new Product(12, "快思慢想：思考的捷徑", "丹尼爾·康納曼", 400));
     }
 
     @GetMapping("/products")
@@ -27,50 +39,6 @@ public class ProductController {
 
     @GetMapping("/products/{id}")
     public Product getProduct(@PathVariable int id) {
-        for (Product p : products) {
-            if (p.getId() == id) return p;
-        }
-        return null;
-    }
-
-    @PostMapping("/cart")
-    public String addCart(@RequestBody OrderItem item) {
-        for (OrderItem i : cart) {
-            if (i.getTitle().equals(item.getTitle())) {
-                i.setQty(i.getQty() + item.getQty());
-                return "數量累加成功";
-            }
-        }
-        cart.add(item);
-        return "加入成功";
-    }
-
-    @GetMapping("/cart")
-    public List<OrderItem> getCart() {
-        return cart;
-    }
-
-    // ⭐ 新增：處理加減按鈕的 API
-    @PutMapping("/cart/update/{index}")
-    public String updateCartQty(@PathVariable int index, @RequestParam int change) {
-        if (index >= 0 && index < cart.size()) {
-            OrderItem item = cart.get(index);
-            int newQty = item.getQty() + change;
-            if (newQty > 0) {
-                item.setQty(newQty);
-            } else {
-                cart.remove(index); // 減到 0 就移除
-            }
-            return "更新成功";
-        }
-        return "索引錯誤";
-    }
-
-    @DeleteMapping("/cart/{index}")
-    public String deleteCart(@PathVariable int index) {
-        if (index >= 0 && index < cart.size()) {
-            cart.remove(index);
-        }
-        return "刪除成功";
+        return products.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
     }
 }

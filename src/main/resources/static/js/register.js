@@ -9,32 +9,34 @@ $(document).ready(function () {
             return;
         }
 
-        let user = { username: username, password: password };
-
         $.ajax({
             url: "/register",
             method: "POST",
             contentType: "application/json",
-            data: JSON.stringify(user),
+            data: JSON.stringify({ username, password }),
+
             success: function (res) {
-                // 這裡要跟後端回傳的字串完全一致
                 if (res.trim() === "註冊成功") {
-                    
-                    // ⭐ 這裡就是自動登入的關鍵：存入狀態
-                    localStorage.setItem("login", "true");
-                    localStorage.setItem("username", username);
-
-                    alert("🎉 註冊成功！系統已為您自動登入。");
-
-                    // 智慧跳轉邏輯
-                    let referrer = document.referrer;
-                    if (referrer && referrer.includes("product.html")) {
-                        window.location.href = referrer;
-                    } else {
-                        window.location.href = "index.html";
-                    }
+                    // ⭐ 註冊成功後自動呼叫登入取得 Token
+                    $.ajax({
+                        url: "/login",
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({ username, password }),
+                        success: function (loginRes) {
+                            localStorage.setItem("token", loginRes.token);
+                            localStorage.setItem("username", loginRes.username);
+                            alert("🎉 註冊成功！系統已為您自動登入。");
+                            let referrer = document.referrer;
+                            if (referrer && referrer.includes("product.html")) {
+                                window.location.href = referrer;
+                            } else {
+                                window.location.href = "index.html";
+                            }
+                        }
+                    });
                 } else {
-                    alert(res); // 顯示「帳號已存在」等訊息
+                    alert(res);
                 }
             },
             error: function () {

@@ -2,105 +2,114 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>商品詳細 - 專業版</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品詳細 - 電子書商城</title>
+    <link rel="stylesheet" href="css/site.css">
     <style>
-        /* ⭐ 導覽列背景色與全站統一 */
-        .navbar { background-color: #212529 !important; }
-        .nav-link, .navbar-brand { color: white !important; }
+        .product-grid { display: grid; grid-template-columns: 380px 1fr; gap: 40px; }
+        @media(max-width:768px){ .product-grid { grid-template-columns: 1fr; } }
 
-        body { font-family: "Microsoft JhengHei"; background: #f4f4f4; color: #333; }
-        /* 稍微增加容器間距以免被導覽列遮住 */
-        .container.product-content { margin-top: 40px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 50px; }
-        
-        .product-img-container { 
-            text-align: center; 
-            border: 1px solid #ddd; 
-            padding: 0; 
-            border-radius: 8px; 
-            overflow: hidden;
-            background: #212529; 
+        .product-img-wrap {
+            border-radius: var(--radius); overflow: hidden;
+            aspect-ratio: 3/4; background: var(--ink-2);
+            box-shadow: var(--shadow-lg);
         }
-        .product-img { 
-            width: 100%; 
-            height: 400px; 
-            object-fit: cover; 
-            transition: transform 0.3s; 
+        .product-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .product-img-wrap:hover .product-img { transform: scale(1.04); }
+
+        .product-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--red); color: white;
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+            padding: 5px 14px; border-radius: 50px; margin-bottom: 16px;
         }
-        .product-img:hover { transform: scale(1.02); }
+        .product-title {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 1.8rem; font-weight: 700; line-height: 1.4;
+            margin-bottom: 8px; color: var(--text);
+        }
+        .product-author { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; }
+        .stars { color: #f59e0b; font-size: 1rem; letter-spacing: 2px; }
+        .rating-text { color: var(--text-muted); font-size: 0.82rem; margin-left: 8px; }
+        .price-divider { height: 1px; background: var(--cream-2); margin: 24px 0; }
+        .price-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+        .price-now { font-family: 'Noto Serif TC', serif; font-size: 2rem; font-weight: 700; color: var(--red); }
+        .price-old { font-size: 1rem; color: var(--text-muted); text-decoration: line-through; }
+        .product-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.9; margin-bottom: 28px; }
+        .qty-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .qty-label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+        .qty-input {
+            width: 72px; padding: 10px; border: 1.5px solid var(--cream-2);
+            border-radius: var(--radius-sm); text-align: center; font-size: 0.95rem;
+            font-weight: 600; background: var(--cream); outline: none;
+            transition: var(--transition);
+        }
+        .qty-input:focus { border-color: var(--gold); }
+        .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn-buy { background: var(--gold); color: var(--ink); }
+        .btn-buy:hover { background: var(--gold-light); transform: translateY(-1px); }
 
-        .stars { color: #ffc107; font-size: 18px; }
-        .original-price { text-decoration: line-through; color: #888; font-size: 16px; margin-left: 10px; }
-        .discount-price { color: #d00; font-size: 32px; font-weight: bold; }
-        .discount-badge { background: #d00; color: white; padding: 2px 8px; border-radius: 3px; font-size: 14px; vertical-align: middle; }
-
-        .qty-input { width: 80px; text-align: center; font-weight: bold; }
-
-        .recom-section { margin-top: 50px; border-top: 2px solid #eee; padding-top: 30px; }
-        .recom-card { border: none; transition: 0.3s; cursor: pointer; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .recom-card:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-
-        .btn-buy { background: #ff9900; color: white; font-weight: bold; border: none; padding: 10px 30px; }
-        .btn-buy:hover { background: #e68a00; color: white; }
+        /* 推薦區 */
+        .recom-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media(max-width:640px){ .recom-grid { grid-template-columns: 1fr 1fr; } }
+        .recom-card {
+            border-radius: var(--radius); overflow: hidden; cursor: pointer;
+            background: white; box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        .recom-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+        .recom-img { width: 100%; height: 140px; object-fit: cover; }
+        .recom-body { padding: 14px; }
+        .recom-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recom-price { font-size: 0.82rem; color: var(--red); font-weight: 700; }
     </style>
 </head>
 <body>
-
-<!-- ✅ 1. 這裡加入導覽列容器 -->
 <div id="navbar"></div>
-
-<div class="container product-content">
-    <div class="row">
-        <!-- 左：圖片 -->
-        <div class="col-md-5">
-            <div class="product-img-container">
-                <img id="productImage" class="product-img" alt="商品圖片">
-            </div>
-        </div>
-
-        <!-- 右：資訊 -->
-        <div class="col-md-7">
-            <h2 id="title" class="fw-bold">載入中...</h2>
-            <p class="text-muted">作者：<span id="author"></span></p>
-            
-            <div class="mb-3">
-                <span class="stars">★★★★★</span>
-                <span class="text-muted ms-2">(15 則評論)</span>
-            </div>
-
-            <hr>
-
-            <div class="mb-3">
-                <span class="discount-badge">限時特惠</span>
-                <span class="discount-price" id="price"></span>
-                <span class="original-price" id="oldPrice"></span>
-            </div>
-
-            <p class="text-secondary">這是一本由專業作家撰寫的優質電子書，內容涵蓋了實務操作與理論基礎，是您學習路上的最佳夥伴。</p>
-
-            <!-- ⭐ 數量選擇器 -->
-            <div class="d-flex align-items-center mt-4">
-                <label class="me-3 fw-bold">數量：</label>
-                <input type="number" id="buyQty" class="form-control qty-input me-3" value="1" min="1">
-                <button id="addCart" class="btn btn-outline-danger me-2">放入購物車</button>
-                <button id="buyNow" class="btn btn-buy">直接購買</button>
+<div class="page-wrap-wide">
+    <div class="card fade-up">
+        <div class="card-body">
+            <div class="product-grid">
+                <div>
+                    <div class="product-img-wrap">
+                        <img id="productImage" class="product-img" alt="書籍封面">
+                    </div>
+                </div>
+                <div>
+                    <div class="product-badge">✦ 限時特惠</div>
+                    <div class="product-title" id="title">載入中...</div>
+                    <div class="product-author">作者：<span id="author"></span></div>
+                    <div>
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-text">4.9（15 則評論）</span>
+                    </div>
+                    <div class="price-divider"></div>
+                    <div class="price-row">
+                        <span class="price-now" id="price"></span>
+                        <span class="price-old" id="oldPrice"></span>
+                    </div>
+                    <div class="product-desc">這是一本由專業作家撰寫的優質電子書，內容涵蓋了實務操作與理論基礎，是您學習路上的最佳夥伴。購買後即可立即閱讀，無需等待。</div>
+                    <div class="qty-row">
+                        <span class="qty-label">數量</span>
+                        <input type="number" id="buyQty" class="qty-input" value="1" min="1" max="99">
+                    </div>
+                    <div class="btn-row">
+                        <button id="addCart" class="btn btn-outline">放入購物車</button>
+                        <button id="buyNow" class="btn btn-buy">立即購買 →</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ⭐ 推薦商品區域 -->
-    <div class="recom-section">
-        <h4 class="mb-4 fw-bold">您可能感興趣的商品</h4>
-        <div class="row" id="recommendations">
-            <!-- 推薦商品由 JS 動態生成 -->
-        </div>
+    <div class="section-header" style="margin-top:56px">
+        <div class="section-title">您可能感興趣的書籍</div>
     </div>
+    <div class="recom-grid" id="recommendations"></div>
 </div>
-
 <script src="js/jquery.min.js"></script>
 <script src="js/common.js"></script>
 <script src="js/product.js"></script>
-<!-- ✅ 2. 這裡加入 navbar.js 的引用 -->
 <script src="js/navbar.js"></script>
 </body>
 </html>

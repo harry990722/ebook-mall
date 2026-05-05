@@ -4,85 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>訂單付款 - 電子書商城</title>
-    
-    <!-- ✅ 引用 Bootstrap 確保樣式與全站統一 -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    
+    <link rel="stylesheet" href="css/site.css">
     <style>
-        body { background-color: #f8f9fa; font-family: "Microsoft JhengHei", sans-serif; }
-        
-        /* 🎨 導覽列深色主題 */
-        .navbar { background-color: #212529 !important; margin-bottom: 50px; }
-        .nav-link, .navbar-brand { color: white !important; }
-
-        /* 付款卡片樣式 */
-        .payment-container { 
-            max-width: 500px; 
-            margin: 60px auto; 
-            background: white; 
-            padding: 40px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
-            text-align: center;
+        .payment-card {
+            max-width: 480px; margin: 0 auto;
+            background: var(--ink); border-radius: var(--radius-lg);
+            padding: 52px 48px; text-align: center;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            animation: fadeUp 0.5s ease;
         }
-
-        .amount-display {
-            font-size: 2.5rem;
-            color: #dc3545;
-            font-weight: bold;
-            margin: 20px 0;
+        .payment-icon { font-size: 3rem; margin-bottom: 16px; }
+        .payment-label { color: rgba(255,255,255,0.5); font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+        .payment-amount {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 2.8rem; font-weight: 700;
+            color: var(--gold-light);
+            margin-bottom: 32px;
         }
-
-        .btn-pay { 
-            width: 100%; 
-            border-radius: 50px; 
-            padding: 15px; 
-            font-weight: bold; 
-            font-size: 1.2rem;
-            margin-top: 20px;
-            transition: 0.3s;
+        .payment-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 28px 0; }
+        .payment-note { font-size: 0.82rem; color: rgba(255,255,255,0.4); margin-bottom: 28px; line-height: 1.7; }
+        .btn-pay {
+            width: 100%; padding: 16px;
+            background: var(--gold); color: var(--ink);
+            border: none; border-radius: 50px;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: var(--transition); font-family: 'Noto Sans TC', sans-serif;
         }
-
-        .btn-pay:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
-        }
+        .btn-pay:hover { background: var(--gold-light); transform: translateY(-2px); }
+        .back-link { display: block; margin-top: 20px; color: rgba(255,255,255,0.35); font-size: 0.82rem; text-decoration: none; }
+        .back-link:hover { color: rgba(255,255,255,0.6); }
+        body { background: var(--ink-2); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 32px; }
     </style>
 </head>
 <body>
-
-    <!-- ✅ 加入導覽列容器 (navbar.js 會自動填入) -->
-    <div id="navbar"></div>
-
-    <div class="container">
-        <div class="payment-container">
-            <h2 class="fw-bold mb-4">💳 訂單付款</h2>
-            
-            <p class="text-secondary mb-1">本次結帳總金額</p>
-            <div class="amount-display">
-                NT$ <span id="amount">0</span>
-            </div>
-
-            <hr class="my-4">
-
-            <div class="alert alert-light text-start small">
-                請確認金額無誤後，點擊下方按鈕完成付款。
-            </div>
-
-            <!-- 付款按鈕 -->
-            <button id="payBtn" class="btn btn-primary btn-pay shadow-sm">立即付款</button>
-            
-            <div class="mt-4">
-                <a href="index.html" class="text-decoration-none text-muted small">稍後再付，回首頁</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- ✅ 引用腳本 (順序：jQuery -> payment.js -> navbar.js) -->
-    <script src="js/jquery.min.js"></script>
-	<script src="js/common.js"></script>
-    <script src="js/payment.js"></script> 
-    <script src="js/navbar.js"></script>
-
+<div class="payment-card">
+    <div class="payment-icon">💳</div>
+    <div class="payment-label">本次結帳總金額</div>
+    <div class="payment-amount">NT$ <span id="amount">0</span></div>
+    <div class="payment-divider"></div>
+    <div class="payment-note">請確認金額無誤後，點擊下方按鈕完成付款。<br>付款完成後將立即開通您的電子書權限。</div>
+    <button id="payBtn" class="btn-pay">立即付款</button>
+    <a href="index.html" class="back-link">稍後再付，返回首頁</a>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/payment.js"></script>
 </body>
 </html>

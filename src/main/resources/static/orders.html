@@ -4,83 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的訂單 - 電子書商城</title>
-    
-    <!-- ✅ 引用 Bootstrap 確保樣式與全站統一 -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    
+    <link rel="stylesheet" href="css/site.css">
     <style>
-        body { background-color: #f8f9fa; font-family: "Microsoft JhengHei", sans-serif; }
-        
-        /* 🎨 導覽列深色主題 */
-        .navbar { background-color: #212529 !important; margin-bottom: 50px; }
-        .nav-link, .navbar-brand { color: white !important; }
-
-        /* 訂單卡片容器 */
-        .orders-container { 
-            max-width: 1000px; 
-            margin: 0 auto 50px auto; 
-            background: white; 
-            padding: 40px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-        }
-
-        /* 表格樣式優化 */
-        .table thead { background-color: #f1f3f5; }
-        .table th { border-top: none; }
-        
-        /* 狀態標籤美化 */
-        .badge-status { padding: 8px 12px; border-radius: 50px; font-size: 0.85rem; }
-
-        /* 底部連結間距：解決黏在一起的問題 */
-        .footer-actions {
-            margin-top: 40px;
-            text-align: center;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-        }
+        .order-id { font-size: 0.8rem; color: var(--text-muted); font-family: monospace; }
+        .order-empty { text-align:center; padding: 64px; color: var(--text-muted); }
+        .order-empty .icon { font-size: 3rem; opacity: 0.3; margin-bottom: 16px; }
     </style>
 </head>
 <body>
-
-    <!-- ✅ 1. 加入導覽列容器 -->
-    <div id="navbar"></div>
-
-    <div class="container">
-        <div class="orders-container">
-            <h2 class="fw-bold mb-4 text-center">📋 我的訂單紀錄</h2>
-            
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
+<div id="navbar"></div>
+<div class="page-wrap">
+    <div class="card fade-up">
+        <div class="card-body">
+            <h2 class="page-title">我的訂單</h2>
+            <div style="overflow-x:auto">
+                <table class="data-table">
                     <thead>
-                        <tr class="text-secondary">
-                            <th class="px-3">訂單ID</th>
+                        <tr>
+                            <th>訂單編號</th>
                             <th>收件人</th>
                             <th>地址</th>
-                            <th>總金額</th>
-                            <th class="text-center">狀態</th>
+                            <th style="text-align:right">金額</th>
+                            <th style="text-align:center">狀態</th>
                         </tr>
                     </thead>
-                    <tbody id="order-list">
-                        <!-- 由 orders.js 動態填入 -->
-                    </tbody>
+                    <tbody id="order-list"></tbody>
                 </table>
             </div>
-
-            <!-- 🚀 修正重點：使用 footer-actions 確保連結有獨立空間 -->
-            <div class="footer-actions">
-                <a href="index.html" class="btn btn-outline-secondary px-5 rounded-pill shadow-sm">
-                    ← 返回商城首頁
-                </a>
+            <div style="text-align:center;margin-top:32px;padding-top:24px;border-top:1px solid var(--cream-2)">
+                <a href="index.html" class="btn btn-outline">← 返回商城首頁</a>
             </div>
         </div>
     </div>
-
-    <!-- ✅ 2. 依序引用腳本 -->
-    <script src="js/jquery.min.js"></script>
-	<script src="js/common.js"></script>
-    <script src="js/orders.js"></script> <!-- 負責抓取後端資料 -->
-    <script src="js/navbar.js"></script> <!-- 負責顯示導覽列 -->
-
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/orders.js"></script>
+<script src="js/navbar.js"></script>
 </body>
 </html>

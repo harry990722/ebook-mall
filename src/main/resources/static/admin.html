@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>後台管理 - 電子書商城</title>
+    <!-- ⭐ 後台專用：完整 Bootstrap 5，支援 Modal / Badge / Form 等元件 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body { background-color: #f0f2f5; font-family: "Microsoft JhengHei", sans-serif; }
+
+        /* ===== 側邊欄 ===== */
+        .sidebar {
+            width: 220px;
+            min-height: 100vh;
+            background: #1a1d23;
+            position: fixed;
+            top: 0; left: 0;
+            padding: 30px 0;
+            z-index: 100;
+        }
+        .sidebar-brand {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 0 24px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 16px;
+        }
+        .sidebar-link {
+            display: block;
+            color: rgba(255,255,255,0.7);
+            padding: 12px 24px;
+            text-decoration: none;
+            transition: 0.2s;
+            font-size: 0.92rem;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+        .sidebar-link span { margin-right: 10px; }
+
+        /* ===== 主內容區 ===== */
+        .main-content {
+            margin-left: 220px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1a1d23;
+        }
+
+        /* ===== 統計卡片 ===== */
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .stat-label { font-size: 0.85rem; color: #888; margin-bottom: 8px; }
+        .stat-value { font-size: 2rem; font-weight: bold; color: #1a1d23; }
+        .stat-icon { font-size: 2rem; opacity: 0.15; float: right; margin-top: -8px; }
+
+        /* ===== 商品表格卡片 ===== */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: none;
+        }
+        .card-header {
+            background: none;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 20px 24px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .table thead th {
+            background: #f8f9fa;
+            border-top: none;
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
+        }
+        .badge-type {
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        /* ===== Modal ===== */
+        .modal-header { border-bottom: 1px solid #f0f0f0; }
+        .modal-footer { border-top: 1px solid #f0f0f0; }
+        .form-label { font-weight: 600; font-size: 0.9rem; color: #444; }
+
+        /* ===== Loading ===== */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.75;
+        }
+        .spinner-border-sm { width: 1rem; height: 1rem; }
+    </style>
+</head>
+<body>
+
+    <!-- 側邊欄 -->
+    <div class="sidebar">
+        <div class="sidebar-brand">⚙️ 後台管理</div>
+        <a class="sidebar-link active" href="admin.html"><span>📦</span>商品管理</a>
+        <a class="sidebar-link" href="orders.html"><span>📋</span>前往訂單頁</a>
+        <a class="sidebar-link" href="index.html"><span>🏠</span>回到商城</a>
+        <a class="sidebar-link" href="#" id="adminLogout"><span>🚪</span>登出</a>
+    </div>
+
+    <!-- 主內容 -->
+    <div class="main-content">
+
+        <!-- 頁首 -->
+        <div class="page-header">
+            <div class="page-title">商品管理</div>
+            <div class="text-muted small">歡迎，<span id="adminUser"></span></div>
+        </div>
+
+        <!-- 統計卡片 -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-label">商品總數</div>
+                    <div class="stat-value" id="statTotal">-</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">💻</div>
+                    <div class="stat-label">技術類</div>
+                    <div class="stat-value" id="statTech">-</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">💼</div>
+                    <div class="stat-label">商業類</div>
+                    <div class="stat-value" id="statBusiness">-</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">🧠</div>
+                    <div class="stat-label">心理類</div>
+                    <div class="stat-value" id="statMind">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 商品列表 -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>所有商品</span>
+                <button class="btn btn-primary btn-sm rounded-pill px-4" onclick="openAddModal()">
+                    ＋ 新增商品
+                </button>
+            </div>
+            <div class="card-body p-0">
+
+                <!-- Loading skeleton -->
+                <div id="tableLoading" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <div class="text-muted mt-2 small">載入商品中...</div>
+                </div>
+
+                <div class="table-responsive" id="tableWrap" style="display:none">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="px-4">ID</th>
+                                <th>書名</th>
+                                <th>作者</th>
+                                <th>類別</th>
+                                <th>售價</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/編輯 Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalTitle">新增商品</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="editId">
+                    <div class="mb-3">
+                        <label class="form-label">書名</label>
+                        <input type="text" id="editTitle" class="form-control" placeholder="請輸入書名">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">作者</label>
+                        <input type="text" id="editAuthor" class="form-control" placeholder="請輸入作者">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">售價（NT$）</label>
+                        <input type="number" id="editPrice" class="form-control" placeholder="請輸入售價" min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">類別</label>
+                        <select id="editType" class="form-select">
+                            <option value="tech">💻 技術</option>
+                            <option value="business">💼 商業</option>
+                            <option value="mind">🧠 心理</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">取消</button>
+                    <button class="btn btn-primary rounded-pill px-4" id="saveBtn" onclick="saveProduct()">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 刪除確認 Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">確認刪除</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    確定要刪除「<span id="deleteTitle" class="fw-bold text-danger"></span>」嗎？
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary btn-sm rounded-pill" data-bs-dismiss="modal">取消</button>
+                    <button class="btn btn-danger btn-sm rounded-pill px-4" id="confirmDeleteBtn" onclick="confirmDelete()">刪除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

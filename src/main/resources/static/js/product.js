@@ -39,13 +39,11 @@ $(document).ready(function () {
             others.forEach(p => {
                 let img = getBookImage(p.title);
                 recomDiv.append(`
-                    <div class="col-md-4 mb-3">
-                        <div class="card recom-card p-3" onclick="location.href='product.html?id=${p.id}'" style="cursor:pointer">
-                            <img src="${img}" style="height:120px; object-fit:cover; border-radius:5px; width:100%;">
-                            <div class="card-body text-center">
-                                <h6 class="text-truncate">${p.title}</h6>
-                                <p class="text-danger fw-bold mb-0">NT$ ${p.price}</p>
-                            </div>
+                    <div class="recom-card" onclick="location.href='product.html?id=${p.id}'">
+                        <img src="${img}" class="recom-img" loading="lazy">
+                        <div class="recom-body">
+                            <div class="recom-title">${p.title}</div>
+                            <div class="recom-price">NT$ ${p.price}</div>
                         </div>
                     </div>
                 `);
@@ -74,15 +72,13 @@ $(document).ready(function () {
             return;
         }
 
-        const qty = parseInt($("#buyQty").val()) || 1;
+        const qty = Math.min(Math.max(parseInt($("#buyQty").val()) || 1, 1), 99); // ⭐ 限制 1~99
 
-        // ⭐ 改用 LocalStorage 存儲購物車
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
         
-        // 檢查是否已有相同商品
         let found = cart.find(item => item.title === currentProduct.title);
         if (found) {
-            found.qty += qty;
+            found.qty = Math.min(found.qty + qty, 99); // ⭐ 加入後總數也不超過 99
         } else {
             cart.push({
                 title: currentProduct.title,

@@ -1,78 +1,109 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>會員登入 - 電子書商城</title>
-    
-    <!-- ✅ 引用 Bootstrap -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    
+    <link rel="stylesheet" href="css/site.css">
     <style>
-        body { background-color: #f8f9fa; font-family: "Microsoft JhengHei", sans-serif; }
-        
-        /* 🎨 導覽列深色主題 */
-        .navbar { background-color: #212529 !important; margin-bottom: 50px; }
-        .nav-link, .navbar-brand { color: white !important; }
+        body { background: var(--ink); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
 
-        /* 登入卡片：增加 padding 讓內部寬鬆一點 */
-        .login-container { 
-            max-width: 450px; 
-            margin: 60px auto; 
-            background: white; 
-            padding: 45px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        .login-wrap {
+            display: flex;
+            width: 860px;
+            max-width: 96vw;
+            min-height: 520px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            animation: fadeUp 0.5s ease;
         }
 
-        /* 加強標籤與輸入框的垂直感 */
-        .form-label { display: block; margin-bottom: 8px; font-weight: 600; }
-        
-        .btn-login { 
-            width: 100%; 
-            border-radius: 50px; 
-            padding: 12px; 
-            font-weight: bold; 
+        /* 左側裝飾 */
+        .login-deco {
+            flex: 1;
+            background: linear-gradient(145deg, #1a1d2e, #0f3460);
+            padding: 52px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-deco::before {
+            content: '';
+            position: absolute;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(201,168,76,0.15), transparent 70%);
+            top: -80px; right: -80px;
+        }
+        .deco-brand {
+            font-family: 'Noto Serif TC', serif;
+            color: var(--gold-light);
             font-size: 1.1rem;
-            margin-top: 15px; 
+            font-weight: 700;
+            letter-spacing: 2px;
         }
+        .deco-text { color: rgba(255,255,255,0.55); font-size: 0.82rem; line-height: 1.9; }
+        .deco-quote {
+            font-family: 'Noto Serif TC', serif;
+            color: rgba(255,255,255,0.85);
+            font-size: 1.15rem;
+            line-height: 1.7;
+            border-left: 3px solid var(--gold);
+            padding-left: 18px;
+        }
+
+        /* 右側表單 */
+        .login-form-wrap {
+            width: 380px;
+            flex-shrink: 0;
+            background: var(--cream);
+            padding: 52px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .login-title {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .login-sub { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 36px; }
+        .divider { height: 1px; background: var(--cream-2); margin: 28px 0; }
+        .login-footer { text-align: center; font-size: 0.83rem; color: var(--text-muted); }
+        .login-footer a { color: var(--gold); text-decoration: none; font-weight: 600; }
+        .login-footer a:hover { color: var(--gold-light); }
     </style>
 </head>
 <body>
-
-    <!-- ✅ 導覽列 -->
-    <div id="navbar"></div>
-
-    <div class="container">
-        <div class="login-container">
-            <h2 class="text-center mb-5 fw-bold">會員登入</h2>
-            
-            <!-- 帳號區塊：使用 mb-4 撐開與下方密碼的距離 -->
-            <div class="mb-4">
-                <label for="username" class="form-label">帳號</label>
-                <input type="text" id="username" class="form-control form-control-lg" placeholder="請輸入帳號">
-            </div>
-            
-            <!-- 密碼區塊：使用 mb-4 撐開與下方按鈕的距離 -->
-            <div class="mb-4">
-                <label for="password" class="form-label">密碼</label>
-                <input type="password" id="password" class="form-control form-control-lg" placeholder="請輸入密碼">
-            </div>
-
-            <!-- 登入按鈕 -->
-            <button id="loginBtn" class="btn btn-primary btn-login shadow-sm">立即登入</button>
-            
-            <div class="text-center mt-4">
-                <a href="register.html" class="text-decoration-none text-secondary small">還沒有帳號？ <span class="text-primary">前往註冊</span></a>
-            </div>
-        </div>
+<div class="login-wrap">
+    <div class="login-deco">
+        <div class="deco-brand">📚 電子書商城</div>
+        <div class="deco-quote">「閱讀是最廉價的旅行，<br>也是最遙遠的相遇。」</div>
+        <div class="deco-text">登入您的帳號，探索數千本精選電子書<br>讓知識成為您最好的投資</div>
     </div>
-
-    <!-- ✅ 引用腳本 -->
-    <script src="js/jquery.min.js"></script>
-	<script src="js/common.js"></script>
-    <script src="js/login.js"></script>
-    <script src="js/navbar.js"></script>
-
+    <div class="login-form-wrap">
+        <div class="login-title">歡迎回來</div>
+        <div class="login-sub">請輸入您的帳號與密碼</div>
+        <div class="form-group">
+            <label class="form-label">帳號</label>
+            <input type="text" id="username" class="form-control" placeholder="請輸入帳號">
+        </div>
+        <div class="form-group">
+            <label class="form-label">密碼</label>
+            <input type="password" id="password" class="form-control" placeholder="請輸入密碼">
+        </div>
+        <button id="loginBtn" class="btn btn-primary btn-full btn-lg" style="margin-top:8px">立即登入</button>
+        <div class="divider"></div>
+        <div class="login-footer">還沒有帳號？<a href="register.html">前往註冊</a></div>
+    </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/login.js"></script>
 </body>
 </html>

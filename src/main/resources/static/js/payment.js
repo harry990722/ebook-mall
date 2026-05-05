@@ -26,7 +26,10 @@ $(document).ready(function () {
             return;
         }
 
-        // 呼叫後端付款 API（帶上 username 供後端驗證身份）
+        // ⭐ Loading 狀態
+        let $btn = $("#payBtn");
+        $btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-2"></span>付款處理中...');
+
         let username = localStorage.getItem("username");
         $.ajax({
             url: "/order/pay/" + orderId + "?username=" + encodeURIComponent(username),
@@ -34,18 +37,17 @@ $(document).ready(function () {
             headers: authHeader(),
             success: function () {
                 alert("🎉 付款成功！感謝您的訂購。");
-
-                // ⭐ 重點修正：付款成功後，直接清空瀏覽器的購物車資料
-                localStorage.removeItem("cart");     // 清空購物車項目
-                localStorage.removeItem("orderId");  // 清除當前處理的訂單ID
-                localStorage.removeItem("total");    // 清除當前處理的金額
-
-                // 跳轉至成功頁面
+                localStorage.removeItem("cart");
+                localStorage.removeItem("orderId");
+                localStorage.removeItem("total");
+                localStorage.removeItem("cartHash"); // ⭐ 清掉購物車 hash
                 window.location.href = "success.html";
             },
             error: function (err) {
                 console.error("付款請求失敗:", err);
                 alert("付款失敗，請洽客服人員！");
+                // ⭐ 恢復按鈕
+                $btn.prop("disabled", false).html("立即付款");
             }
         });
     });

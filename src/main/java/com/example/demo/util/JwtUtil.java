@@ -2,41 +2,63 @@ package com.example.demo.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import jakarta.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
 
+@Component  // ⭐ 改成 Spring Bean，才能用 @Value 注入
 public class JwtUtil {
 
-    // ⭐ 密鑰：至少 256 bits，正式上線請改從環境變數讀取
-    private static final Key SECRET_KEY = Keys.hmacShaKeyFor(
-        "MySecretKey_MustBe32CharsOrMore!!".getBytes()
-    );
+    @Value("${jwt.secret}")
+    private String secret;
 
-    // Token 有效期：7 天
-    private static final long EXPIRATION_MS = 7 * 24 * 60 * 60 * 1000L;
+    @Value("${jwt.expiration}")
+    private long expirationMs;
 
-    // ===== 產生 Token =====
-    public static String generateToken(String username) {
+    private Key secretKey;
+
+    // ⭐ 啟動後才能拿到注入的值，這裡做初始化
+    @PostConstruct
+    public void init() {
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+    }
+
+    // 產生 Token（含 role）
+    public String generateToken(String username, String role) {
         return Jwts.builder()
             .setSubject(username)
+            .claim("role", role)
             .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-            .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+            .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+            .signWith(secretKey, SignatureAlgorithm.HS256)
             .compact();
     }
 
-    // ===== 驗證並解析 username =====
-    // 回傳 null 代表 Token 無效或已過期
-    public static String getUsernameFromToken(String token) {
+    // 解析 username
+    public String getUsernameFromToken(String token) {
         try {
-            return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+            return getClaims(token).getSubject();
         } catch (JwtException | IllegalArgumentException e) {
             return null;
         }
+    }
+
+    // 解析 role
+    public String getRoleFromToken(String token) {
+        try {
+            return getClaims(token).get("role", String.class);
+        } catch (JwtException | IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+            .setSigningKey(secretKey)
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
     }
 }

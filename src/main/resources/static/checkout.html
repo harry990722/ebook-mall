@@ -3,137 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>結帳 - 電子書商城</title>
-    
-    <!-- ✅ 引用 Bootstrap -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    
+    <title>結帳確認 - 電子書商城</title>
+    <link rel="stylesheet" href="css/site.css">
     <style>
-        body { background-color: #f8f9fa; font-family: "Microsoft JhengHei", sans-serif; }
-        .navbar { background-color: #212529 !important; margin-bottom: 40px; }
-        .nav-link, .navbar-brand { color: white !important; }
-
-        .checkout-container { max-width: 900px; margin: 0 auto 50px auto; }
-        .card { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        
-        /* 🔵 標題藍色側邊條樣式 */
-        .card-title { 
-            font-weight: bold; 
-            border-left: 5px solid #0d6efd; 
-            padding-left: 15px; 
-            margin-bottom: 25px; 
-            display: flex;
-            align-items: center;
+        .checkout-grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+        @media(max-width:768px){ .checkout-grid { grid-template-columns: 1fr; } }
+        .section-label {
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 1.2px;
+            text-transform: uppercase; color: var(--text-muted);
+            border-left: 3px solid var(--gold); padding-left: 10px;
+            margin-bottom: 20px;
         }
-        
-        .total-price { color: #dc3545; font-weight: bold; font-size: 1.5rem; }
-
-        /* 🚀 解決黏在一起的關鍵：強制標籤換行並增加間距 */
-        .form-label { 
-            display: block;      /* 強制標籤自己佔一行 */
-            font-weight: 600; 
-            margin-bottom: 10px; /* 與輸入框拉開距離 */
-            color: #495057;
+        .order-total {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 0 0; border-top: 1px solid var(--cream-2); margin-top: 8px;
+            font-weight: 700; font-size: 1.1rem;
         }
-
-        .form-control-lg {
-            border-radius: 8px;
-            width: 100%;        /* 讓輸入框填滿卡片寬度，更好看 */
-        }
-
-        /* 按鈕加寬並增加圓角 */
-        .btn-submit { 
-            width: 100%; 
-            border-radius: 50px; 
-            padding: 15px; 
-            font-weight: bold; 
-            font-size: 1.2rem;
-            margin-top: 20px;
-        }
+        .order-total span { font-family: 'Noto Serif TC', serif; font-size: 1.4rem; color: var(--red); }
+        .check-wrap { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
+        .check-wrap input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--gold); cursor: pointer; }
+        .check-wrap label { font-size: 0.88rem; color: var(--text-muted); cursor: pointer; }
     </style>
 </head>
 <body>
-
-    <div id="navbar"></div>
-
-    <div class="container checkout-container">
-        <h2 class="text-center mb-5 fw-bold">🧾 結帳確認</h2>
-
-        <!-- 商品清單 -->
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h4 class="card-title">商品清單</h4>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle text-center">
+<div id="navbar"></div>
+<div class="page-wrap-wide">
+    <h2 class="page-title" style="text-align:left;margin-bottom:32px">結帳確認</h2>
+    <div class="checkout-grid">
+        <!-- 左：商品清單 -->
+        <div class="card fade-up">
+            <div class="card-body">
+                <div class="section-label">商品明細</div>
+                <div style="overflow-x:auto">
+                    <table class="data-table">
                         <thead>
-                            <tr class="text-secondary">
+                            <tr>
                                 <th>書名</th>
-                                <th>價格</th>
-                                <th>數量</th>
-                                <th>小計</th>
+                                <th style="text-align:center">單價</th>
+                                <th style="text-align:center">數量</th>
+                                <th style="text-align:center">小計</th>
                             </tr>
                         </thead>
                         <tbody id="checkout-list"></tbody>
                     </table>
                 </div>
-                <hr>
-                <div class="text-end">
-                    <h4 class="mb-0">總金額：<span class="total-price">NT$ <span id="totalPrice">0</span></span></h4>
+                <div class="order-total">
+                    <span>應付金額</span>
+                    <span>NT$ <span id="totalPrice">0</span></span>
                 </div>
             </div>
         </div>
-
-        <!-- 收件資訊 -->
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h4 class="card-title">收件資訊</h4>
-                
-                <!-- 姓名區塊：mb-4 撐開與地址的距離 -->
-                <div class="mb-4">
+        <!-- 右：收件資訊 -->
+        <div class="card fade-up" style="animation-delay:0.1s">
+            <div class="card-body">
+                <div class="section-label">收件資訊</div>
+                <div class="form-group">
                     <label class="form-label">收件人姓名</label>
-                    <input type="text" id="name" class="form-control form-control-lg" placeholder="請輸入姓名">
+                    <input type="text" id="name" class="form-control" placeholder="請輸入姓名">
                 </div>
-
-                <!-- 地址區塊：mb-4 撐開與按鈕的距離 -->
-                <div class="mb-4">
+                <div class="form-group">
                     <label class="form-label">收件地址</label>
-                    <input type="text" id="address" class="form-control form-control-lg" placeholder="請輸入地址">
+                    <input type="text" id="address" class="form-control" placeholder="請輸入地址">
                 </div>
-				
-				<!-- ⭐ 新增：付款方式 -->
-				<div class="mb-4">
-					<label class="form-label">付款方式</label>
-					<select id="paymentMethod" class="form-select form-control-lg">
-						<option value="credit">信用卡</option>
-						<option value="cod">貨到付款</option>
-						<option value="linepay">LINE Pay</option>
-					</select>
-				</div>
-
-				
-				<!-- ⭐ 勾選確認 -->
-				<div class="form-check mb-3">
-					<input class="form-check-input" type="checkbox" id="agree">
-					<label class="form-check-label">
-						我已確認訂單內容無誤
-					</label>
+                <div class="form-group">
+                    <label class="form-label">付款方式</label>
+                    <select id="paymentMethod" class="form-control form-select">
+                        <option value="credit">💳 信用卡</option>
+                        <option value="cod">🚚 貨到付款</option>
+                        <option value="linepay">💚 LINE Pay</option>
+                    </select>
                 </div>
-				
-				<button id="submitOrder" class="btn btn-primary btn-submit shadow-sm">
-					確認並送出訂單
-				</button>
-					
-                <div class="text-center mt-4">
-                    <a href="cart.html" class="text-decoration-none text-secondary">← 返回購物車修改</a>
+                <div class="check-wrap">
+                    <input type="checkbox" id="agree">
+                    <label for="agree">我已確認訂單內容無誤</label>
+                </div>
+                <button id="submitOrder" class="btn btn-primary btn-full btn-lg">確認送出訂單</button>
+                <div style="text-align:center;margin-top:16px">
+                    <a href="cart.html" class="btn btn-outline btn-sm">← 返回購物車</a>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="js/jquery.min.js"></script>
-	<script src="js/common.js"></script>
-    <script src="js/checkout.js"></script>
-    <script src="js/navbar.js"></script>
-
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/checkout.js"></script>
+<script src="js/navbar.js"></script>
 </body>
 </html>

@@ -1,6 +1,31 @@
 let allProducts = [];
 
+// ⭐ Skeleton loading HTML
+function showSkeleton() {
+    let skeletonHtml = '';
+    for (let i = 0; i < 4; i++) {
+        skeletonHtml += `
+        <div class="col-6 col-md-3 mb-4">
+            <div style="padding:10px">
+                <div style="width:100%;aspect-ratio:3/4;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:6px"></div>
+                <div style="height:16px;background:#f0f0f0;border-radius:4px;margin-top:12px;animation:shimmer 1.2s infinite"></div>
+                <div style="height:14px;background:#f0f0f0;border-radius:4px;margin-top:8px;width:60%;animation:shimmer 1.2s infinite"></div>
+            </div>
+        </div>`;
+    }
+    $("#product-list").html(skeletonHtml);
+    // 加入 shimmer 動畫
+    if (!document.getElementById("shimmerStyle")) {
+        let style = document.createElement("style");
+        style.id = "shimmerStyle";
+        style.textContent = "@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}";
+        document.head.appendChild(style);
+    }
+}
+
 $(document).ready(function () {
+
+    showSkeleton();
 
     // 讀取商品
     $.get("/products", function (data) {
@@ -8,47 +33,25 @@ $(document).ready(function () {
         render(data);
     });
 
-    // 🔍 搜尋
+    // 🔍 搜尋（書名 + 作者）
     $("#searchInput").on("keyup", function () {
         let keyword = $(this).val().toLowerCase();
-
         let filtered = allProducts.filter(p =>
-            p.title.toLowerCase().includes(keyword)
+            p.title.toLowerCase().includes(keyword) ||
+            (p.author && p.author.toLowerCase().includes(keyword))
         );
-
         render(filtered);
     });
 
     // 🏷 分類
     $(".filter-btn").click(function () {
-        // 切換按鈕樣式 (誠品風格：被點擊的變深色)
-        $(".filter-btn").removeClass("btn-dark").addClass("btn-outline-dark");
-        $(this).removeClass("btn-outline-dark").addClass("btn-dark");
+        $(".filter-btn").removeClass("active");
+        $(this).addClass("active");
 
         let type = $(this).data("type");
+        if (type === "all") { render(allProducts); return; }
 
-        if (type === "all") {
-            render(allProducts);
-            return;
-        }
-
-        let filtered = allProducts.filter(p => {
-            let title = p.title;
-
-            // ⭐ 擴充關鍵字，確保所有新書都能被分類
-            if (type === "tech") {
-                return title.includes("Java") || title.includes("前端") || title.includes("Spring") || title.includes("Docker") || title.includes("Kubernetes") || title.includes("微服務");
-            }
-            if (type === "business") {
-                return title.includes("致富") || title.includes("財富") || title.includes("原則") || title.includes("理財") || title.includes("心態");
-            }
-            if (type === "mind") {
-                return title.includes("習慣") || title.includes("思考") || title.includes("快思慢想") || title.includes("工作力");
-            }
-
-            return true;
-        });
-
+        let filtered = allProducts.filter(p => p.type === type);
         render(filtered);
     });
 
@@ -77,29 +80,27 @@ function render(list) {
         let oldPrice = Math.round(p.price * 1.25);
 
         let html = `
-        <div class="col-6 col-md-3 mb-4">
-            <div class="product-card" onclick="goDetail(${p.id})">
-                <div class="img-wrap">
-                    <span class="discount">79折</span>
-                    <img src="${img}" class="product-img">
-                </div>
-                <div class="book-title">${p.title}</div>
-                <div class="book-author">${p.author || ''}</div>
-                <div class="mt-1">
-                    <span class="price-now">NT$ ${p.price}</span>
-                    <span class="price-old">NT$ ${oldPrice}</span>
+        <div class="product-card" onclick="goDetail(${p.id})">
+            <div class="pcard-img-wrap">
+                <span class="pcard-discount">79折</span>
+                <img src="${img}" class="pcard-img" loading="lazy">
+            </div>
+            <div class="pcard-body">
+                <div class="pcard-title">${p.title}</div>
+                <div class="pcard-author">${p.author || ''}</div>
+                <div class="pcard-price">
+                    <span class="pcard-now">NT$ ${p.price}</span>
+                    <span class="pcard-old">NT$ ${oldPrice}</span>
                 </div>
             </div>
         </div>
         `;
 
         if (isFiltered) {
-            // ⭐ 搜尋狀態下：全部塞進主區，不分兩邊
             mainContainer.append(html);
-            $(".section-header:eq(1)").hide(); // 隱藏「編輯推薦」標題
+            $("#recom-header").hide();
         } else {
-            // ⭐ 正常狀態下：前 4 本 → 主區，其他 → 推薦區
-            $(".section-header:eq(1)").show(); // 顯示標題
+            $("#recom-header").show();
             if (index < 4) {
                 mainContainer.append(html);
             } else {

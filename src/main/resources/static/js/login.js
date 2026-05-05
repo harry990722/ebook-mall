@@ -17,10 +17,16 @@ $(document).ready(function () {
             data: JSON.stringify({ username, password }),
 
             success: function (res) {
-                // ⭐ 後端現在回傳 { token, username }
                 alert("🎉 登入成功！");
-                localStorage.setItem("token", res.token);
+                localStorage.setItem("token",    res.token);
                 localStorage.setItem("username", res.username);
+                localStorage.setItem("role",     res.role); // ⭐ 存入角色
+
+                // admin 直接進後台，一般使用者回原頁或首頁
+                if (res.role === "admin") {
+                    window.location.href = "admin.html";
+                    return;
+                }
 
                 let referrer = document.referrer;
                 if (referrer && (referrer.includes("product.html") || referrer.includes("checkout.html"))) {

@@ -39,8 +39,13 @@ $(document).ready(function () {
                     alert(res);
                 }
             },
-            error: function () {
-                alert("伺服器錯誤");
+            error: function (xhr) {
+                // ⭐ 400 代表後端有回傳具體原因（帳號已存在、欄位為空等）
+                if (xhr.status === 400 && xhr.responseText) {
+                    alert("❌ " + xhr.responseText);
+                } else {
+                    alert("❗ 伺服器錯誤，請確認後端服務是否已啟動。");
+                }
             }
         });
     });

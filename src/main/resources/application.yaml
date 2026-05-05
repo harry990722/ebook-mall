@@ -7,18 +7,20 @@ spring:
     username: avnadmin
     password: AVNS_kEZP2NjYYFIxuCMolrM
     driver-class-name: com.mysql.cj.jdbc.Driver
-  
+
   jpa:
-    # ⭐ 1. 解決第一個警告：將 open-in-view 設為 false
     open-in-view: false
     hibernate:
       ddl-auto: update
     show-sql: true
-    # ⭐ 2. 解決第二個警告：刪除原本手動指定的 dialect (已幫你移除)
     properties:
       hibernate:
-        # 如果沒有特殊需求，這裡可以留空，讓 Spring 自動偵測
 
 logging:
   level:
     com.zaxxer.hikari: DEBUG
+
+# ⭐ JWT 設定（正式環境建議從環境變數讀取）
+jwt:
+  secret: ${JWT_SECRET:MySecretKey_MustBe32CharsOrMore!!}
+  expiration: 604800000  # 7天（毫秒）

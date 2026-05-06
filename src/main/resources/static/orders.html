@@ -7,8 +7,38 @@
     <link rel="stylesheet" href="css/site.css">
     <style>
         .order-id { font-size: 0.8rem; color: var(--text-muted); font-family: monospace; }
+        .order-time { font-size: 0.78rem; color: var(--text-muted); margin-top: 3px; }
         .order-empty { text-align:center; padding: 64px; color: var(--text-muted); }
         .order-empty .icon { font-size: 3rem; opacity: 0.3; margin-bottom: 16px; }
+
+        /* 展開明細 */
+        .detail-row { background: var(--cream) !important; }
+        .detail-row td { padding: 0 !important; }
+        .detail-inner {
+            padding: 16px 24px;
+            border-top: 1px solid var(--cream-2);
+        }
+        .detail-title {
+            font-size: 0.78rem; font-weight: 700; letter-spacing: 0.8px;
+            text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;
+        }
+        .detail-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 0; border-bottom: 1px dashed var(--cream-2); font-size: 0.85rem;
+        }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-item-title { color: var(--text); font-weight: 500; }
+        .detail-item-info { color: var(--text-muted); font-size: 0.8rem; }
+        .expand-btn {
+            background: none; border: none; cursor: pointer;
+            color: var(--gold); font-size: 0.82rem; font-weight: 600;
+            padding: 4px 10px; border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+        .expand-btn:hover { background: var(--gold-dim); }
+
+        /* 付款方式 icon */
+        .payment-icon { font-size: 0.82rem; color: var(--text-muted); margin-top: 3px; }
     </style>
 </head>
 <body>
@@ -18,12 +48,12 @@
         <div class="card-body">
             <h2 class="page-title">我的訂單</h2>
             <div style="overflow-x:auto">
-                <table class="data-table">
+                <table class="data-table" id="orders-table">
                     <thead>
                         <tr>
                             <th>訂單編號</th>
-                            <th>收件人</th>
-                            <th>地址</th>
+                            <th>收件資訊 / 商品明細</th>
+                            <th>下單時間</th>
                             <th style="text-align:right">金額</th>
                             <th style="text-align:center">狀態</th>
                         </tr>

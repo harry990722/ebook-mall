@@ -46,7 +46,9 @@ $(document).ready(function () {
 function loadProducts() {
     $("#tableLoading").show(); $("#tableWrap").hide();
     $.ajax({
-        url: "/products", method: "GET",
+        url: "/admin/products/all", // ⭐ 後台用專屬 API，含停售商品
+        method: "GET",
+        headers: authHeader(),
         success: function (data) {
             allProducts = data;
             renderTable(data); updateStats(data);
@@ -59,10 +61,10 @@ function loadProducts() {
 }
 
 function updateStats(data) {
-    $("#statTotal").text(data.length);
-    $("#statTech").text(data.filter(p => p.type === "tech").length);
-    $("#statBusiness").text(data.filter(p => p.type === "business").length);
-    $("#statMind").text(data.filter(p => p.type === "mind").length);
+    $("#statTotal").text(data.filter(p => p.active).length);
+    $("#statTech").text(data.filter(p => p.type === "tech" && p.active).length);
+    $("#statBusiness").text(data.filter(p => p.type === "business" && p.active).length);
+    $("#statMind").text(data.filter(p => p.type === "mind" && p.active).length);
 }
 
 function renderTable(list) {
@@ -80,18 +82,31 @@ function renderTable(list) {
         let img = p.imageUrl
             ? `<img src="${p.imageUrl}" style="width:40px;height:52px;object-fit:cover;border-radius:4px">`
             : `<div style="width:40px;height:52px;background:#f0e8d8;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px">📚</div>`;
+
+        // ⭐ 上架狀態標籤
+        let statusBadge = p.active
+            ? `<span style="background:rgba(56,161,105,0.12);color:#276749;padding:3px 10px;border-radius:50px;font-size:0.75rem;font-weight:600">✓ 上架中</span>`
+            : `<span style="background:rgba(224,82,82,0.1);color:#c53030;padding:3px 10px;border-radius:50px;font-size:0.75rem;font-weight:600">✕ 已停售</span>`;
+
+        // ⭐ 停售/上架按鈕
+        let toggleBtn = p.active
+            ? `<button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="toggleProduct(${p.id})">停售</button>`
+            : `<button class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="toggleProduct(${p.id})">上架</button>`;
+
         let row = `
-        <tr>
+        <tr style="${p.active ? '' : 'opacity:0.55'}">
             <td class="px-4 text-muted">#${p.id}</td>
             <td>${img}</td>
             <td class="fw-bold">${p.title}</td>
             <td class="text-muted">${p.author}</td>
             <td>${typeMap[p.type] || p.type}</td>
             <td class="text-danger fw-bold">NT$ ${p.price.toLocaleString()}</td>
-            <td class="text-center">
+            <td>${statusBadge}</td>
+            <td class="text-center" style="white-space:nowrap">
                 <button class="btn btn-sm btn-outline-primary rounded-pill me-1 px-3"
                     onclick="openEditModal(${p.id})">編輯</button>
-                <button class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                ${toggleBtn}
+                <button class="btn btn-sm btn-outline-danger rounded-pill px-2 ms-1"
                     onclick="openDeleteModal(${p.id}, '${p.title.replace(/'/g, "\\'")}')">刪除</button>
             </td>
         </tr>`;
@@ -148,6 +163,25 @@ function saveProduct() {
             else alert("❌ 儲存失敗");
         },
         complete: function () { $btn.removeClass("btn-loading").html("儲存"); }
+    });
+}
+
+// ⭐ 切換上架 / 停售
+function toggleProduct(id) {
+    let p = allProducts.find(p => p.id == id);
+    if (!p) return;
+    let action = p.active ? "停售" : "上架";
+    if (!confirm(`確定要將「${p.title}」設為${action}嗎？`)) return;
+
+    $.ajax({
+        url: `/admin/products/${id}/toggle`,
+        method: "PUT",
+        headers: authHeader(),
+        success: function () {
+            showToast(`已${action}：${p.title}`, p.active ? "warn" : "success");
+            loadProducts();
+        },
+        error: function (xhr) { handleApiError(xhr, `${action}失敗`); }
     });
 }
 

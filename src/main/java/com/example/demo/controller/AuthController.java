@@ -3,6 +3,9 @@ package com.example.demo.controller;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
+@Tag(name = "會員認證", description = "註冊、登入、修改密碼")
 @RestController
 @CrossOrigin
 public class AuthController {
@@ -36,6 +40,7 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "會員註冊", description = "建立新帳號，role 自動設為 user")
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
         if (user.getUsername() == null || user.getUsername().trim().isEmpty() ||
@@ -51,6 +56,7 @@ public class AuthController {
         return ResponseEntity.ok("註冊成功");
     }
 
+    @Operation(summary = "會員登入", description = "成功後回傳 JWT Token、username、role")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         User dbUser = repo.findByUsername(user.getUsername()).orElse(null);
@@ -68,6 +74,8 @@ public class AuthController {
     }
 
     // ⭐ 修改密碼
+    @Operation(summary = "修改密碼", description = "需登入，提供舊密碼與新密碼")
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/user/password")
     public ResponseEntity<?> changePassword(
             @RequestHeader(value = "Authorization", required = false) String authHeader,

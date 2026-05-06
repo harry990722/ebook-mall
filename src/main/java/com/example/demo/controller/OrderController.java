@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderItem;
 import com.example.demo.model.User;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "訂單管理", description = "建立訂單、付款、取消、查詢")
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @CrossOrigin
 public class OrderController {
@@ -32,6 +37,7 @@ public class OrderController {
     }
 
     // ⭐ 建立訂單
+    @Operation(summary = "建立訂單", description = "需登入，從前端購物車建立訂單")
     @PostMapping("/order")
     public ResponseEntity<?> createOrder(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
@@ -57,6 +63,7 @@ public class OrderController {
     }
 
     // ⭐ 使用者付款
+    @Operation(summary = "付款", description = "將訂單狀態改為 paid，僅限訂單本人")
     @PutMapping("/order/pay/{id}")
     public ResponseEntity<?> payOrder(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
@@ -78,6 +85,7 @@ public class OrderController {
     }
 
     // ⭐ 使用者取消訂單（只有 pending 才能取消）
+    @Operation(summary = "取消訂單", description = "只有 pending 狀態可取消，僅限訂單本人")
     @PutMapping("/order/cancel/{id}")
     public ResponseEntity<?> cancelOrder(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
@@ -102,6 +110,7 @@ public class OrderController {
     }
 
     // ⭐ 查詢我的訂單
+    @Operation(summary = "查詢我的訂單", description = "回傳當前登入使用者的所有訂單")
     @GetMapping("/my-orders")
     public ResponseEntity<?> getMyOrders(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -116,6 +125,7 @@ public class OrderController {
     // ===== 後台管理 API =====
 
     // ⭐ 後台：取得所有訂單
+    @Operation(summary = "【後台】取得所有訂單", description = "需 admin 權限")
     @GetMapping("/admin/orders")
     public ResponseEntity<?> getAllOrders(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -127,6 +137,7 @@ public class OrderController {
     }
 
     // ⭐ 後台：更新訂單狀態
+    @Operation(summary = "【後台】更新訂單狀態", description = "需 admin 權限，狀態值：pending / paid / shipped / completed / cancelled")
     @PutMapping("/admin/orders/{id}/status")
     public ResponseEntity<?> updateOrderStatus(
             @RequestHeader(value = "Authorization", required = false) String authHeader,

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByType(String type);
+    // ⭐ 只回傳上架商品
+    List<Product> findByActiveTrue();
 }

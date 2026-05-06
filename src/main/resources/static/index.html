@@ -99,6 +99,20 @@
     .pcard-price { display: flex; align-items: baseline; gap: 8px; }
     .pcard-now { color: var(--red); font-weight: 700; font-size: 1rem; }
     .pcard-old { color: #bbb; text-decoration: line-through; font-size: 0.78rem; }
+
+    /* ===== 分頁 ===== */
+    .page-btn {
+        min-width: 36px; height: 36px;
+        border: 1.5px solid var(--cream-2); border-radius: 50%;
+        background: white; cursor: pointer; font-size: 0.88rem;
+        font-weight: 500; color: var(--text-muted);
+        transition: var(--transition); display: inline-flex;
+        align-items: center; justify-content: center; padding: 0 8px;
+    }
+    .page-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--text); }
+    .page-btn.active { background: var(--ink); color: white; border-color: var(--ink); }
+    .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .page-dots { color: var(--text-muted); font-size: 0.9rem; padding: 0 2px; }
 </style>
 </head>
 <body>
@@ -145,14 +159,16 @@
 
     <!-- 新書焦點 -->
     <div class="section-header">
-        <div class="section-title">新書焦點</div>
+        <div class="section-title">書籍列表</div>
+        <div id="total-items" style="font-size:0.85rem;color:var(--text-muted)"></div>
     </div>
     <div class="product-grid" id="product-list"></div>
 
-    <!-- 編輯推薦 -->
-    <div class="section-header" id="recom-header">
-        <div class="section-title">編輯推薦</div>
+    <!-- ⭐ 分頁元件 -->
+    <div id="pagination-wrap" style="display:none;text-align:center;margin:36px 0 12px">
+        <div id="pagination-btns" style="display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center"></div>
     </div>
+
     <div class="product-grid" id="product-list-2"></div>
 
 </div>

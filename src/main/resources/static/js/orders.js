@@ -57,6 +57,13 @@ $(document).ready(function () {
                     `;
                 }
 
+                let timeStr = "-";
+                if (order.createdAt) {
+                    let d = new Date(order.createdAt);
+                    timeStr = d.toLocaleDateString("zh-TW") + "<br>" +
+                              `<span style="font-size:0.75rem;color:var(--text-muted)">${d.toLocaleTimeString("zh-TW", {hour:"2-digit",minute:"2-digit"})}</span>`;
+                }
+
                 $("#order-list").append(`
                     <tr>
                         <td><span class="order-id">#${order.id}</span></td>
@@ -66,6 +73,7 @@ $(document).ready(function () {
                             ${itemsHtml ? `<div style="margin-top:6px">${itemsHtml}</div>` : ""}
                             ${actionBtns}
                         </td>
+                        <td style="font-size:0.85rem;line-height:1.6">${timeStr}</td>
                         <td style="text-align:right;font-weight:700;color:var(--red)">NT$ ${order.total.toLocaleString()}</td>
                         <td style="text-align:center">${statusLabel(order.status)}</td>
                     </tr>

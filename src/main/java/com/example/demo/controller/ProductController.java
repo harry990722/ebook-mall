@@ -1,15 +1,20 @@
 package com.example.demo.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import com.example.demo.model.Product;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.util.JwtUtil;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@Tag(name = "商品管理", description = "商品查詢與後台 CRUD")
 @RestController
 @CrossOrigin
 public class ProductController {
@@ -37,11 +42,56 @@ public class ProductController {
         productRepo.save(new Product("快思慢想：思考的捷徑", "丹尼爾·康納曼", 400, "mind"));
     }
 
+    // ⭐ 前台：分頁查詢（預設每頁 8 筆，只回傳上架商品）
+    @Operation(summary = "取得商品列表", description = "支援分頁、類別篩選、關鍵字搜尋，只回傳上架商品")
     @GetMapping("/products")
-    public List<Product> getProducts() {
-        return productRepo.findAll();
+    public ResponseEntity<?> getProducts(
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "8")  int size,
+            @RequestParam(defaultValue = "")   String type,
+            @RequestParam(defaultValue = "")   String keyword) {
+
+        List<Product> all = productRepo.findByActiveTrue();
+
+        // 類別篩選
+        if (!type.isEmpty())
+            all = all.stream().filter(p -> type.equals(p.getType())).toList();
+
+        // 關鍵字搜尋（書名 + 作者）
+        if (!keyword.isEmpty()) {
+            String kw = keyword.toLowerCase();
+            all = all.stream().filter(p ->
+                p.getTitle().toLowerCase().contains(kw) ||
+                (p.getAuthor() != null && p.getAuthor().toLowerCase().contains(kw))
+            ).toList();
+        }
+
+        int total     = all.size();
+        int totalPages = (int) Math.ceil((double) total / size);
+        int fromIdx   = Math.min(page * size, total);
+        int toIdx     = Math.min(fromIdx + size, total);
+        List<Product> pageData = all.subList(fromIdx, toIdx);
+
+        return ResponseEntity.ok(Map.of(
+            "content",     pageData,
+            "totalPages",  totalPages,
+            "totalItems",  total,
+            "currentPage", page
+        ));
     }
 
+    // ⭐ 後台：回傳所有商品（含停售）
+    @Operation(summary = "【後台】取得所有商品（含停售）", description = "需 admin 權限")
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/admin/products/all")
+    public ResponseEntity<?> getAllProducts(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (!isAdmin(authHeader))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("權限不足");
+        return ResponseEntity.ok(productRepo.findAll());
+    }
+
+    @Operation(summary = "取得單一商品", description = "依 ID 查詢商品詳細資料")
     @GetMapping("/products/{id}")
     public ResponseEntity<?> getProduct(@PathVariable Long id) {
         return productRepo.findById(id)
@@ -49,6 +99,8 @@ public class ProductController {
             .orElse(ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "【後台】新增商品", description = "需 admin 權限")
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/admin/products")
     public ResponseEntity<?> createProduct(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
@@ -58,6 +110,8 @@ public class ProductController {
         return ResponseEntity.ok(productRepo.save(product));
     }
 
+    @Operation(summary = "【後台】編輯商品", description = "需 admin 權限")
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/admin/products/{id}")
     public ResponseEntity<?> updateProduct(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
@@ -75,6 +129,23 @@ public class ProductController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+    // ⭐ 切換上架 / 停售狀態
+    @Operation(summary = "【後台】切換上架/停售", description = "需 admin 權限，true = 上架，false = 停售")
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/admin/products/{id}/toggle")
+    public ResponseEntity<?> toggleProduct(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @PathVariable Long id) {
+        if (!isAdmin(authHeader))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("權限不足");
+        return productRepo.findById(id).map(p -> {
+            p.setActive(!p.isActive());
+            return ResponseEntity.ok(productRepo.save(p));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "【後台】刪除商品", description = "需 admin 權限，永久刪除")
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/admin/products/{id}")
     public ResponseEntity<?> deleteProduct(
             @RequestHeader(value = "Authorization", required = false) String authHeader,

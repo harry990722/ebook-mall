@@ -60,7 +60,7 @@
     .review-content { font-size: 0.9rem; color: var(--text); line-height: 1.7; }
     .review-del-btn { font-size: 0.75rem; color: var(--red); background: none; border: none; cursor: pointer; padding: 0; }
     .review-del-btn:hover { text-decoration: underline; }
-    .review-form { background: var(--cream); border-radius: var(--radius); padding: 24px; margin-top: 24px; }
+    .review-form select { font-family: "Arial", "Microsoft JhengHei", sans-serif; }
         .recom-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         @media(max-width:640px){ .recom-grid { grid-template-columns: 1fr 1fr; } }
         .recom-card {
@@ -141,12 +141,12 @@
                 <div style="font-weight:700;margin-bottom:16px;font-size:0.9rem;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-muted)">撰寫評論</div>
                 <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
                     <label style="font-size:0.88rem;font-weight:600;color:var(--text-muted)">評分</label>
-                    <select id="review-rating" class="form-control" style="width:120px" value="5">
-                        <option value="5" selected>⭐⭐⭐⭐⭐ 5分</option>
-                        <option value="4">⭐⭐⭐⭐ 4分</option>
-                        <option value="3">⭐⭐⭐ 3分</option>
-                        <option value="2">⭐⭐ 2分</option>
-                        <option value="1">⭐ 1分</option>
+                    <select id="review-rating" class="form-control" style="width:160px">
+                        <option value="5" selected>★★★★★ (5分)</option>
+                        <option value="4">★★★★☆ (4分)</option>
+                        <option value="3">★★★☆☆ (3分)</option>
+                        <option value="2">★★☆☆☆ (2分)</option>
+                        <option value="1">★☆☆☆☆ (1分)</option>
                     </select>
                 </div>
                 <textarea id="review-content" class="form-control" rows="3"

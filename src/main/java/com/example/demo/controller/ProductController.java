@@ -70,6 +70,7 @@ public class ProductController {
             p.setAuthor(updated.getAuthor());
             p.setPrice(updated.getPrice());
             p.setType(updated.getType());
+            p.setImageUrl(updated.getImageUrl()); // ⭐ 圖片 URL
             return ResponseEntity.ok(productRepo.save(p));
         }).orElse(ResponseEntity.notFound().build());
     }

@@ -18,6 +18,7 @@ let userSection = !username ? `
     <a class="nav-link" href="register.html">註冊</a>
 ` : `
     <span class="nav-welcome">歡迎，${username}</span>
+    <a class="nav-link" href="profile.html">個人資料</a>
     <a class="nav-link" href="orders.html">我的訂單</a>
     ${adminLink}
     <a class="nav-link" href="#" id="logoutBtn">登出</a>

@@ -44,11 +44,17 @@ $(document).ready(function () {
                     ).join("");
                 }
 
-                // ⭐ 待付款訂單顯示「繼續付款」按鈕
-                let payBtn = "";
+                // ⭐ 待付款訂單：繼續付款 + 取消訂單
+                let actionBtns = "";
                 if (order.status === "pending") {
-                    payBtn = `<button class="btn btn-gold btn-sm" style="margin-top:6px;font-size:0.78rem"
-                        onclick="continuePay(${order.id}, ${order.total})">繼續付款</button>`;
+                    actionBtns = `
+                        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+                            <button class="btn btn-gold btn-sm" style="font-size:0.78rem"
+                                onclick="continuePay(${order.id}, ${order.total})">繼續付款</button>
+                            <button class="btn btn-danger-outline btn-sm" style="font-size:0.78rem"
+                                onclick="cancelOrder(${order.id})">取消訂單</button>
+                        </div>
+                    `;
                 }
 
                 $("#order-list").append(`
@@ -58,7 +64,7 @@ $(document).ready(function () {
                             <div style="font-weight:600">${order.name}</div>
                             <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px">${order.address}</div>
                             ${itemsHtml ? `<div style="margin-top:6px">${itemsHtml}</div>` : ""}
-                            ${payBtn}
+                            ${actionBtns}
                         </td>
                         <td style="text-align:right;font-weight:700;color:var(--red)">NT$ ${order.total.toLocaleString()}</td>
                         <td style="text-align:center">${statusLabel(order.status)}</td>
@@ -72,7 +78,24 @@ $(document).ready(function () {
     });
 });
 
-// ⭐ 繼續付款：把訂單資訊存回 localStorage 再跳付款頁
+// ⭐ 取消訂單
+function cancelOrder(orderId) {
+    if (!confirm("確定要取消這筆訂單嗎？")) return;
+    $.ajax({
+        url: "/order/cancel/" + orderId,
+        method: "PUT",
+        headers: authHeader(),
+        success: function () {
+            showToast("訂單已取消", "info");
+            location.reload();
+        },
+        error: function (xhr) {
+            handleApiError(xhr, "取消失敗，請稍後再試");
+        }
+    });
+}
+
+// ⭐ 繼續付款
 function continuePay(orderId, total) {
     localStorage.setItem("orderId", orderId);
     localStorage.setItem("total", total);

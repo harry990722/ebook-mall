@@ -1,61 +1,63 @@
 let allProducts = [];
+let allOrders   = [];
 let deleteTargetId = null;
+let currentTab = "products";
 
 $(document).ready(function () {
 
-    // ===== 登入 & 權限檢查 =====
+    // ===== 權限檢查 =====
     let username = localStorage.getItem("username");
     let role     = localStorage.getItem("role");
-
     if (!username || !localStorage.getItem("token")) {
-        alert("請先登入！");
-        window.location.href = "login.html";
-        return;
+        alert("請先登入！"); window.location.href = "login.html"; return;
     }
-
     if (role !== "admin") {
-        alert("⛔ 您沒有權限進入後台管理！");
-        window.location.href = "index.html";
-        return;
+        alert("⛔ 您沒有權限進入後台！"); window.location.href = "index.html"; return;
     }
     $("#adminUser").text(username);
 
     loadProducts();
 
+    // Tab 切換
+    $(document).on("click", ".tab-btn", function () {
+        $(".tab-btn").removeClass("active");
+        $(this).addClass("active");
+        currentTab = $(this).data("tab");
+        if (currentTab === "products") {
+            $("#products-section").show(); $("#orders-section").hide();
+            loadProducts();
+        } else {
+            $("#products-section").hide(); $("#orders-section").show();
+            loadOrders();
+        }
+    });
+
     // 登出
     $("#adminLogout").click(function () {
         if (confirm("確定要登出嗎？")) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("username");
-            localStorage.removeItem("role");
-            localStorage.removeItem("login");
+            localStorage.removeItem("token"); localStorage.removeItem("username");
+            localStorage.removeItem("role");  localStorage.removeItem("login");
             window.location.href = "index.html";
         }
     });
 });
 
-// ===== 載入商品列表 =====
+// ===== 商品管理 =====
 function loadProducts() {
-    $("#tableLoading").show();
-    $("#tableWrap").hide();
-
+    $("#tableLoading").show(); $("#tableWrap").hide();
     $.ajax({
-        url: "/products",
-        method: "GET",
+        url: "/products", method: "GET",
         success: function (data) {
             allProducts = data;
-            renderTable(data);
-            updateStats(data);
-            $("#tableLoading").hide();
-            $("#tableWrap").show();
+            renderTable(data); updateStats(data);
+            $("#tableLoading").hide(); $("#tableWrap").show();
         },
         error: function () {
-            $("#tableLoading").html('<div class="text-danger py-4 text-center">❌ 載入失敗，請確認後端是否啟動</div>');
+            $("#tableLoading").html('<div class="text-danger py-4 text-center">❌ 載入失敗</div>');
         }
     });
 }
 
-// ===== 統計卡片 =====
 function updateStats(data) {
     $("#statTotal").text(data.length);
     $("#statTech").text(data.filter(p => p.type === "tech").length);
@@ -63,30 +65,29 @@ function updateStats(data) {
     $("#statMind").text(data.filter(p => p.type === "mind").length);
 }
 
-// ===== 渲染表格 =====
 function renderTable(list) {
     const typeMap = {
         tech:     '<span class="badge-type bg-primary bg-opacity-10 text-primary">💻 技術</span>',
         business: '<span class="badge-type bg-success bg-opacity-10 text-success">💼 商業</span>',
         mind:     '<span class="badge-type bg-warning bg-opacity-10 text-warning">🧠 心理</span>'
     };
-
     $("#product-table").empty();
-
     if (list.length === 0) {
-        $("#product-table").append('<tr><td colspan="6" class="text-center text-muted py-4">尚無商品資料</td></tr>');
+        $("#product-table").append('<tr><td colspan="7" class="text-center text-muted py-4">尚無商品</td></tr>');
         return;
     }
-
     list.forEach(p => {
-        let typeLabel = typeMap[p.type] || `<span class="badge bg-secondary">${p.type}</span>`;
+        let img = p.imageUrl
+            ? `<img src="${p.imageUrl}" style="width:40px;height:52px;object-fit:cover;border-radius:4px">`
+            : `<div style="width:40px;height:52px;background:#f0e8d8;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px">📚</div>`;
         let row = `
         <tr>
             <td class="px-4 text-muted">#${p.id}</td>
+            <td>${img}</td>
             <td class="fw-bold">${p.title}</td>
             <td class="text-muted">${p.author}</td>
-            <td>${typeLabel}</td>
-            <td class="text-danger fw-bold">NT$ ${p.price}</td>
+            <td>${typeMap[p.type] || p.type}</td>
+            <td class="text-danger fw-bold">NT$ ${p.price.toLocaleString()}</td>
             <td class="text-center">
                 <button class="btn btn-sm btn-outline-primary rounded-pill me-1 px-3"
                     onclick="openEditModal(${p.id})">編輯</button>
@@ -98,97 +99,58 @@ function renderTable(list) {
     });
 }
 
-// ===== Modal 開關輔助 =====
-function showModal(id) {
-    // 優先用 bootstrap 物件，若不存在改用 jQuery 觸發
-    let el = document.getElementById(id);
-    if (typeof bootstrap !== "undefined") {
-        new bootstrap.Modal(el).show();
-    } else {
-        $(el).modal("show");
-    }
-}
-
-function hideModal(id) {
-    let el = document.getElementById(id);
-    if (typeof bootstrap !== "undefined") {
-        let instance = bootstrap.Modal.getInstance(el);
-        if (instance) instance.hide();
-    } else {
-        $(el).modal("hide");
-    }
-}
-
-// ===== 新增 Modal =====
 function openAddModal() {
     $("#modalTitle").text("新增商品");
-    $("#editId").val("");
-    $("#editTitle, #editAuthor, #editPrice").val("");
+    $("#editId, #editTitle, #editAuthor, #editPrice, #editImageUrl").val("");
     $("#editType").val("tech");
     showModal("productModal");
 }
 
-// ===== 編輯 Modal =====
 function openEditModal(id) {
     let p = allProducts.find(p => p.id == id);
     if (!p) return;
-
     $("#modalTitle").text("編輯商品");
     $("#editId").val(p.id);
     $("#editTitle").val(p.title);
     $("#editAuthor").val(p.author);
     $("#editPrice").val(p.price);
     $("#editType").val(p.type);
+    $("#editImageUrl").val(p.imageUrl || "");
     showModal("productModal");
 }
 
-// ===== 儲存（新增或編輯）=====
 function saveProduct() {
-    let title  = $("#editTitle").val().trim();
-    let author = $("#editAuthor").val().trim();
-    let price  = parseInt($("#editPrice").val());
-    let type   = $("#editType").val();
-    let id     = $("#editId").val();
+    let title    = $("#editTitle").val().trim();
+    let author   = $("#editAuthor").val().trim();
+    let price    = parseInt($("#editPrice").val());
+    let type     = $("#editType").val();
+    let imageUrl = $("#editImageUrl").val().trim() || null;
+    let id       = $("#editId").val();
 
     if (!title || !author || !price || price < 1) {
-        alert("❌ 請填寫完整商品資訊");
-        return;
+        alert("❌ 請填寫完整商品資訊"); return;
     }
 
-    let productData = { title, author, price, type };
-
-    // ⭐ Loading 狀態
     let $btn = $("#saveBtn");
     $btn.addClass("btn-loading").html('<span class="spinner-border spinner-border-sm me-2"></span>儲存中...');
 
-    let isEdit = id !== "";
-    let url    = isEdit ? `/admin/products/${id}` : "/admin/products";
-    let method = isEdit ? "PUT" : "POST";
-
     $.ajax({
-        url, method,
+        url: id ? `/admin/products/${id}` : "/admin/products",
+        method: id ? "PUT" : "POST",
         contentType: "application/json",
         headers: authHeader(),
-        data: JSON.stringify(productData),
+        data: JSON.stringify({ title, author, price, type, imageUrl }),
         success: function () {
-            hideModal("productModal");
-            loadProducts();
+            hideModal("productModal"); loadProducts();
         },
         error: function (err) {
-            if (err.status === 401) {
-                alert("⚠️ 登入已過期，請重新登入");
-                window.location.href = "login.html";
-            } else {
-                alert("❌ 儲存失敗，請再試一次");
-            }
+            if (err.status === 401) { alert("⚠️ 登入已過期"); window.location.href = "login.html"; }
+            else alert("❌ 儲存失敗");
         },
-        complete: function () {
-            $btn.removeClass("btn-loading").html("儲存");
-        }
+        complete: function () { $btn.removeClass("btn-loading").html("儲存"); }
     });
 }
 
-// ===== 刪除確認 Modal =====
 function openDeleteModal(id, title) {
     deleteTargetId = id;
     $("#deleteTitle").text(title);
@@ -197,29 +159,100 @@ function openDeleteModal(id, title) {
 
 function confirmDelete() {
     if (!deleteTargetId) return;
-
     let $btn = $("#confirmDeleteBtn");
     $btn.addClass("btn-loading").html('<span class="spinner-border spinner-border-sm me-2"></span>刪除中...');
-
     $.ajax({
-        url: `/admin/products/${deleteTargetId}`,
-        method: "DELETE",
+        url: `/admin/products/${deleteTargetId}`, method: "DELETE",
         headers: authHeader(),
-        success: function () {
-            hideModal("deleteModal");
-            deleteTargetId = null;
-            loadProducts();
-        },
+        success: function () { hideModal("deleteModal"); deleteTargetId = null; loadProducts(); },
         error: function (err) {
-            if (err.status === 401) {
-                alert("⚠️ 登入已過期，請重新登入");
-                window.location.href = "login.html";
-            } else {
-                alert("❌ 刪除失敗");
-            }
+            if (err.status === 401) { alert("⚠️ 登入已過期"); window.location.href = "login.html"; }
+            else alert("❌ 刪除失敗");
         },
-        complete: function () {
-            $btn.removeClass("btn-loading").html("刪除");
+        complete: function () { $btn.removeClass("btn-loading").html("刪除"); }
+    });
+}
+
+// ===== 訂單管理 =====
+function loadOrders() {
+    $("#orderTableLoading").show(); $("#orderTableWrap").hide();
+    $.ajax({
+        url: "/admin/orders", method: "GET",
+        headers: authHeader(),
+        success: function (data) {
+            allOrders = data;
+            renderOrders(data);
+            $("#orderTableLoading").hide(); $("#orderTableWrap").show();
+        },
+        error: function (xhr) {
+            if (xhr.status === 401) { alert("⚠️ 登入已過期"); window.location.href = "login.html"; }
+            else $("#orderTableLoading").html('<div class="text-danger py-4 text-center">❌ 載入失敗</div>');
         }
     });
+}
+
+function renderOrders(list) {
+    const statusMap = {
+        pending:   { label: "待付款", color: "#a07828", bg: "rgba(201,168,76,0.12)" },
+        paid:      { label: "已付款", color: "#276749", bg: "rgba(56,161,105,0.12)" },
+        shipped:   { label: "已出貨", color: "#2b6cb0", bg: "rgba(66,153,225,0.12)" },
+        completed: { label: "已完成", color: "#2b6cb0", bg: "rgba(66,153,225,0.12)" },
+        cancelled: { label: "已取消", color: "#718096", bg: "rgba(113,128,150,0.12)" },
+    };
+
+    $("#order-table").empty();
+    if (list.length === 0) {
+        $("#order-table").append('<tr><td colspan="6" class="text-center text-muted py-4">尚無訂單</td></tr>');
+        return;
+    }
+    list.forEach(o => {
+        const s = statusMap[o.status] || { label: o.status, color: "#718096", bg: "#eee" };
+        const badge = `<span style="background:${s.bg};color:${s.color};padding:3px 10px;border-radius:50px;font-size:0.78rem;font-weight:600">${s.label}</span>`;
+        const items = (o.items || []).map(i => `${i.title}×${i.qty}`).join("、") || "-";
+        const row = `
+        <tr>
+            <td class="text-muted" style="font-family:monospace">#${o.id}</td>
+            <td><div style="font-weight:600">${o.name}</div><div style="font-size:0.78rem;color:#9090a8">${o.address}</div></td>
+            <td style="font-size:0.82rem;color:#666;max-width:180px">${items}</td>
+            <td style="font-weight:700;color:#e05252">NT$ ${o.total.toLocaleString()}</td>
+            <td>${badge}</td>
+            <td>
+                <select class="form-select" style="font-size:0.82rem;padding:4px 8px;border-radius:8px;width:110px"
+                    onchange="updateOrderStatus(${o.id}, this.value)">
+                    <option value="pending"   ${o.status==="pending"   ? "selected":""}>待付款</option>
+                    <option value="paid"      ${o.status==="paid"      ? "selected":""}>已付款</option>
+                    <option value="shipped"   ${o.status==="shipped"   ? "selected":""}>已出貨</option>
+                    <option value="completed" ${o.status==="completed" ? "selected":""}>已完成</option>
+                    <option value="cancelled" ${o.status==="cancelled" ? "selected":""}>已取消</option>
+                </select>
+            </td>
+        </tr>`;
+        $("#order-table").append(row);
+    });
+}
+
+function updateOrderStatus(orderId, newStatus) {
+    $.ajax({
+        url: `/admin/orders/${orderId}/status`,
+        method: "PUT",
+        contentType: "application/json",
+        headers: authHeader(),
+        data: JSON.stringify({ status: newStatus }),
+        success: function () { showToast("狀態已更新", "success"); },
+        error: function (xhr) { handleApiError(xhr, "更新失敗"); loadOrders(); }
+    });
+}
+
+// ===== Modal 工具 =====
+function showModal(id) {
+    let el = document.getElementById(id);
+    if (typeof bootstrap !== "undefined") new bootstrap.Modal(el).show();
+    else $(el).modal("show");
+}
+function hideModal(id) {
+    let el = document.getElementById(id);
+    if (typeof bootstrap !== "undefined") {
+        let inst = bootstrap.Modal.getInstance(el);
+        if (inst) inst.hide();
+    } else $(el).modal("hide");
 }

@@ -1,4 +1,11 @@
-function getBookImage(title) {
+// ⭐ 取得書籍圖片：優先用後端的 imageUrl，沒有才用書名猜
+function getBookImage(titleOrProduct) {
+    // 如果傳入的是物件（含 imageUrl）
+    if (titleOrProduct && typeof titleOrProduct === "object") {
+        if (titleOrProduct.imageUrl) return titleOrProduct.imageUrl;
+        titleOrProduct = titleOrProduct.title || "";
+    }
+    const title = titleOrProduct || "";
     if (!title) return "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&q=80";
     if (title.includes("Java"))     return "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=400&q=80";
     if (title.includes("Spring"))   return "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&q=80";

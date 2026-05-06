@@ -51,6 +51,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- ⭐ BCrypt 密碼加密 -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+		</dependency>
+
 		<!-- ⭐ JWT -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

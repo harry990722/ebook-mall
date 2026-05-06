@@ -76,7 +76,7 @@ function render(list) {
 
     list.forEach((p, index) => {
 
-        let img = getBookImage(p.title);
+        let img = getBookImage(p); // ⭐ 傳整個物件，優先用 imageUrl
         let oldPrice = Math.round(p.price * 1.25);
 
         let html = `

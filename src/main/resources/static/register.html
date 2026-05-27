@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員註冊 - 電子書商城</title>
+    <link rel="stylesheet" href="css/site.css">
+    <style>
+        body { background: var(--ink); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .register-wrap {
+            display: flex; width: 860px; max-width: 96vw; min-height: 520px;
+            border-radius: var(--radius-lg); overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5); animation: fadeUp 0.5s ease;
+        }
+        .register-deco {
+            flex: 1;
+            background: linear-gradient(145deg, #1a2e1a, #0f3420);
+            padding: 52px 44px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            position: relative; overflow: hidden;
+        }
+        .register-deco::before {
+            content: ''; position: absolute;
+            width: 300px; height: 300px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(56,161,105,0.2), transparent 70%);
+            top: -80px; right: -80px;
+        }
+        .deco-brand { font-family: 'Noto Serif TC', serif; color: #86efac; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; }
+        .deco-quote { font-family: 'Noto Serif TC', serif; color: rgba(255,255,255,0.85); font-size: 1.1rem; line-height: 1.7; border-left: 3px solid #4ade80; padding-left: 18px; }
+        .deco-text { color: rgba(255,255,255,0.5); font-size: 0.82rem; line-height: 1.9; }
+        .register-form-wrap {
+            width: 400px; flex-shrink: 0; background: var(--cream);
+            padding: 52px 44px; display: flex; flex-direction: column; justify-content: center;
+        }
+        .register-title { font-family: 'Noto Serif TC', serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+        .register-sub { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 36px; }
+        .divider { height: 1px; background: var(--cream-2); margin: 28px 0; }
+        .reg-footer { text-align: center; font-size: 0.83rem; color: var(--text-muted); }
+        .reg-footer a { color: var(--gold); text-decoration: none; font-weight: 600; }
+        .btn-green { background: #16a34a; color: white; }
+        .btn-green:hover { background: #15803d; transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+<div class="register-wrap">
+    <div class="register-deco">
+        <div class="deco-brand">📚 電子書商城</div>
+        <div class="deco-quote">「每一本書都是一扇窗，<br>打開就是另一個世界。」</div>
+        <div class="deco-text">加入我們，立即享有數千本精選電子書<br>開啟您的知識之旅</div>
+    </div>
+    <div class="register-form-wrap">
+        <div class="register-title">建立帳號</div>
+        <div class="register-sub">填寫以下資訊，立即開始閱讀</div>
+        <div class="form-group">
+            <label class="form-label">設定帳號</label>
+            <input type="text" id="username" class="form-control" placeholder="請輸入欲使用的帳號">
+        </div>
+        <div class="form-group">
+            <label class="form-label">設定密碼</label>
+            <input type="password" id="password" class="form-control" placeholder="請輸入密碼">
+        </div>
+        <button id="registerBtn" class="btn btn-green btn-full btn-lg" style="margin-top:8px">立即註冊</button>
+        <div class="divider"></div>
+        <div class="reg-footer">已有帳號？<a href="login.html">前往登入</a></div>
+    </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/register.js"></script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電子書商城</title>
+<link rel="stylesheet" href="css/site.css">
+<style>
+    /* ===== Banner ===== */
+    .banner-wrap {
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        height: 440px;
+        position: relative;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 8px;
+    }
+    .carousel-inner { width: 100%; height: 100%; }
+    .carousel-item {
+        width: 100%; height: 440px;
+        position: relative;
+    }
+    .carousel-item img {
+        width: 100%; height: 440px;
+        object-fit: cover; object-position: center;
+        filter: brightness(0.65);
+        display: block;
+        position: absolute; top: 0; left: 0;
+    }
+    .banner-text {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        padding: 40px 48px;
+        background: linear-gradient(to top, rgba(15,17,23,0.85) 0%, transparent 100%);
+        z-index: 10; pointer-events: none;
+    }
+    .banner-text h2 {
+        font-family: 'Noto Serif TC', serif;
+        color: white; font-size: 1.7rem; font-weight: 700;
+        margin-bottom: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .banner-text p { color: rgba(255,255,255,0.75); font-size: 0.9rem; }
+    .carousel-indicators {
+        bottom: 20px;
+        z-index: 20;
+        margin: 0;
+    }
+    .carousel-indicators button {
+        width: 12px !important; height: 12px !important;
+        border-radius: 50% !important;
+        background-color: rgba(255,255,255,0.95) !important;
+        border: 2px solid #1a1d23 !important;
+        margin: 0 6px !important;
+        opacity: 1 !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        transition: all 0.3s;
+        text-indent: -9999px;
+    }
+    .carousel-indicators button.active {
+        background-color: var(--gold) !important;
+        border-color: var(--gold) !important;
+        transform: scale(1.35);
+        box-shadow: 0 2px 10px rgba(201,168,76,0.6);
+    }
+
+    /* ===== 搜尋控制區 ===== */
+    .control-bar {
+        background: white; border-radius: var(--radius);
+        padding: 20px 24px; margin-bottom: 36px;
+        box-shadow: var(--shadow-sm);
+        display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-btn {
+        padding: 7px 20px; border-radius: 50px; font-size: 0.85rem;
+        font-weight: 500; cursor: pointer; border: 1.5px solid var(--cream-2);
+        background: transparent; color: var(--text-muted);
+        transition: var(--transition); font-family: 'Noto Sans TC', sans-serif;
+    }
+    .filter-btn:hover, .filter-btn.active {
+        background: var(--ink); color: white; border-color: var(--ink);
+    }
+    .search-wrap { flex: 1; min-width: 200px; position: relative; }
+    .search-wrap input {
+        width: 100%; padding: 10px 16px 10px 40px;
+        border: 1.5px solid var(--cream-2); border-radius: 50px;
+        font-size: 0.88rem; background: var(--cream);
+        font-family: 'Noto Sans TC', sans-serif; outline: none;
+        transition: var(--transition);
+    }
+    .search-wrap input:focus { border-color: var(--gold); background: white; }
+    .search-icon {
+        position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+        color: var(--text-muted); font-size: 14px;
+    }
+
+    /* ===== 商品卡片 ===== */
+    .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    @media(max-width:900px){ .product-grid { grid-template-columns: repeat(3,1fr); } }
+    @media(max-width:600px){ .product-grid { grid-template-columns: repeat(2,1fr); } }
+
+    .product-card {
+        background: white; border-radius: var(--radius); overflow: hidden;
+        cursor: pointer; transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+    }
+    .product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+    .product-card:hover .pcard-img { transform: scale(1.05); }
+
+    .pcard-img-wrap {
+        aspect-ratio: 3/4; overflow: hidden; position: relative;
+        background: var(--cream-2);
+    }
+    .pcard-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; }
+    .pcard-discount {
+        position: absolute; top: 10px; left: 10px;
+        background: var(--red); color: white;
+        font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        padding: 3px 10px; border-radius: 50px;
+    }
+    .pcard-body { padding: 14px 16px 18px; }
+    .pcard-title {
+        font-weight: 700; font-size: 0.88rem; line-height: 1.45;
+        height: 2.6em; overflow: hidden; margin-bottom: 4px; color: var(--text);
+    }
+    .pcard-author { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; }
+    .pcard-price { display: flex; align-items: baseline; gap: 8px; }
+    .pcard-now { color: var(--red); font-weight: 700; font-size: 1rem; }
+    .pcard-old { color: #bbb; text-decoration: line-through; font-size: 0.78rem; }
+
+    /* ===== 銷售排行 ===== */
+    .ranking-wrap { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+    .ranking-item {
+        display: flex; align-items: center; gap: 16px;
+        background: white; border-radius: var(--radius); padding: 16px 20px;
+        box-shadow: var(--shadow-sm); cursor: pointer; transition: var(--transition);
+    }
+    .ranking-item:hover { transform: translateX(4px); box-shadow: var(--shadow); }
+    .rank-badge {
+        width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 1rem;
+    }
+    .rank-1 { background: #FFD700; color: #7a5800; }
+    .rank-2 { background: #C0C0C0; color: #555; }
+    .rank-3 { background: #CD7F32; color: #fff; }
+    .rank-other { background: var(--cream-2); color: var(--text-muted); font-size: 0.88rem; }
+    .ranking-img { width: 52px; height: 68px; object-fit: cover; border-radius: 6px; flex-shrink: 0; background: var(--cream-2); }
+    .ranking-info { flex: 1; min-width: 0; }
+    .ranking-title { font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ranking-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 3px; }
+    .ranking-stat { text-align: right; flex-shrink: 0; }
+    .ranking-qty { font-size: 1.3rem; font-weight: 800; color: var(--red); line-height: 1; }
+    .ranking-qty-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ===== 分頁 ===== */
+    .page-btn {
+        min-width: 36px; height: 36px;
+        border: 1.5px solid var(--cream-2); border-radius: 50%;
+        background: white; cursor: pointer; font-size: 0.88rem;
+        font-weight: 500; color: var(--text-muted);
+        transition: var(--transition); display: inline-flex;
+        align-items: center; justify-content: center; padding: 0 8px;
+    }
+    .page-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--text); }
+    .page-btn.active { background: var(--ink); color: white; border-color: var(--ink); }
+    .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .page-dots { color: var(--text-muted); font-size: 0.9rem; padding: 0 2px; }
+</style>
+<link rel="stylesheet" href="css/chat-widget.css"></head>
+<body>
+<div id="navbar"></div>
+<div class="page-wrap-wide">
+
+    <!-- ⭐ 動態 Banner -->
+    <div id="heroBanner" class="carousel slide banner-wrap mt-2" data-bs-ride="carousel" data-bs-interval="4500" style="margin-bottom:40px">
+        <div class="carousel-indicators" id="bannerIndicators"></div>
+        <div class="carousel-inner" id="bannerInner">
+            <div class="carousel-item active">
+                <div style="width:100%;height:440px;background:var(--ink-2)"></div>
+            </div>
+        </div>
+        <div class="banner-text">
+            <h2 id="bannerTitle">📚 電子書商城精選好書</h2>
+            <p id="bannerSubtitle">技術・商業・心理學，每本都是你的競爭力</p>
+        </div>
+    </div>
+
+    <!-- 搜尋與分類 -->
+    <div class="control-bar">
+        <div class="filter-pills">
+            <button class="filter-btn active" data-type="all">全部</button>
+            <button class="filter-btn" data-type="tech">💻 技術</button>
+            <button class="filter-btn" data-type="business">💼 商業</button>
+            <button class="filter-btn" data-type="mind">🧠 心理</button>
+        </div>
+        <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="搜尋書名、作者...">
+        </div>
+    </div>
+
+    <!-- 新書焦點 -->
+    <div class="section-header">
+        <div class="section-title">書籍列表</div>
+        <div id="total-items" style="font-size:0.85rem;color:var(--text-muted)"></div>
+    </div>
+    <div class="product-grid" id="product-list"></div>
+
+    <!-- ⭐ 分頁元件 -->
+    <div id="pagination-wrap" style="display:none;text-align:center;margin:36px 0 12px">
+        <div id="pagination-btns" style="display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center"></div>
+    </div>
+
+    <!-- ⭐ 銷售排行榜 -->
+    <div class="section-header" id="ranking-header">
+        <div class="section-title">🏆 銷售排行榜</div>
+        <div style="font-size:0.82rem;color:var(--text-muted)">依實際購買統計</div>
+    </div>
+    <div id="ranking-list" class="ranking-wrap"></div>
+
+    <div class="product-grid" id="product-list-2"></div>
+
+</div>
+
+<footer class="site-footer">
+    <div class="footer-main">
+        <div class="footer-col">
+            <div class="footer-brand">📚 電子書商城</div>
+            <p>提供技術、商業、心理類精選好書，全館 79 折優惠。</p>
+            <p style="margin-top:12px;font-size:0.78rem;color:rgba(255,255,255,0.35)">閱讀，讓你走得更遠</p>
+        </div>
+        <div class="footer-col">
+            <h4>快速連結</h4>
+            <a href="index.html">商城首頁</a>
+            <a href="orders.html">我的訂單</a>
+            <a href="profile.html">個人資料</a>
+            <a href="chat.html">💬 AI 客服</a>
+        </div>
+        <div class="footer-col">
+            <h4>客服服務</h4>
+            <a href="contact.html">📞 聯絡真人客服</a>
+            <a href="chat.html">🤖 AI 即時諮詢</a>
+            <a href="#" onclick="alert('FAQ 頁面建置中');return false;">❓ 常見問題</a>
+        </div>
+        <div class="footer-col">
+            <h4>聯絡資訊</h4>
+            <div class="footer-contact-row">
+                <div class="icon">📧</div>
+                <div class="text"><strong>客服信箱</strong>service@ebook-shop.com</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">☎️</div>
+                <div class="text"><strong>客服電話</strong>02-1234-5678</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">🕐</div>
+                <div class="text"><strong>服務時間</strong>週一至週五 09:00-18:00</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">© 2026 電子書商城 · All Rights Reserved</div>
+</footer>
+
+<!-- Bootstrap JS for carousel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/index.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/chat-widget.js"></script></body>
+</html>

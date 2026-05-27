@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂單完成 - 電子書商城</title>
+    <link rel="stylesheet" href="css/site.css">
+    <link rel="stylesheet" href="css/chat-widget.css">
+    <style>
+        /* ⭐ 不再用 body flex 置中，改用一般文流；這樣 navbar / footer 才會在正確位置 */
+        body {
+            background: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 內容區自己置中 */
+        .success-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px;
+        }
+
+        .success-card {
+            max-width: 480px; width: 100%;
+            background: white; border-radius: var(--radius-lg);
+            padding: 56px 48px; text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: fadeUp 0.6s ease;
+        }
+        .success-ring {
+            width: 88px; height: 88px; border-radius: 50%;
+            background: linear-gradient(135deg, #d4edda, #a8d5b5);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; margin: 0 auto 28px;
+            box-shadow: 0 8px 24px rgba(56,161,105,0.25);
+        }
+        .success-title {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 1.6rem; font-weight: 700; margin-bottom: 12px;
+        }
+        .success-text { color: var(--text-muted); font-size: 0.9rem; line-height: 1.8; margin-bottom: 36px; }
+        .success-divider { height: 1px; background: var(--cream-2); margin: 28px 0; }
+        .success-links { display: flex; flex-direction: column; gap: 12px; }
+    </style>
+</head>
+<body>
+<div id="navbar"></div>
+
+<div class="success-wrap">
+    <div class="success-card">
+        <div class="success-ring">🎉</div>
+        <div class="success-title">訂單完成！</div>
+        <div class="success-text">
+            感謝您的購買，您的電子書已準備好供您閱讀。<br>
+            訂單細節已發送至您的會員帳號。
+        </div>
+        <div class="success-divider"></div>
+        <div class="success-links">
+            <a href="index.html" class="btn btn-primary btn-lg">返回商城首頁</a>
+            <a href="orders.html" class="btn btn-outline">查看我的訂單</a>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-main">
+        <div class="footer-col">
+            <div class="footer-brand">📚 電子書商城</div>
+            <p>提供技術、商業、心理類精選好書，全館 79 折優惠。</p>
+            <p style="margin-top:12px;font-size:0.78rem;color:rgba(255,255,255,0.35)">閱讀，讓你走得更遠</p>
+        </div>
+        <div class="footer-col">
+            <h4>快速連結</h4>
+            <a href="index.html">商城首頁</a>
+            <a href="orders.html">我的訂單</a>
+            <a href="profile.html">個人資料</a>
+            <a href="chat.html">💬 AI 客服</a>
+        </div>
+        <div class="footer-col">
+            <h4>客服服務</h4>
+            <a href="contact.html">📞 聯絡真人客服</a>
+            <a href="chat.html">🤖 AI 即時諮詢</a>
+            <a href="#" onclick="alert('FAQ 頁面建置中');return false;">❓ 常見問題</a>
+        </div>
+        <div class="footer-col">
+            <h4>聯絡資訊</h4>
+            <div class="footer-contact-row">
+                <div class="icon">📧</div>
+                <div class="text"><strong>客服信箱</strong>service@ebook-shop.com</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">☎️</div>
+                <div class="text"><strong>客服電話</strong>02-1234-5678</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">🕐</div>
+                <div class="text"><strong>服務時間</strong>週一至週五 09:00-18:00</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">© 2026 電子書商城 · All Rights Reserved</div>
+</footer>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/chat-widget.js"></script>
+</body>
+</html>

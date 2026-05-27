@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的訂單 - 電子書商城</title>
+    <link rel="stylesheet" href="css/site.css">
+    <style>
+        .order-id { font-size: 0.8rem; color: var(--text-muted); font-family: monospace; }
+        .order-time { font-size: 0.78rem; color: var(--text-muted); margin-top: 3px; }
+        .order-empty { text-align:center; padding: 64px; color: var(--text-muted); }
+        .order-empty .icon { font-size: 3rem; opacity: 0.3; margin-bottom: 16px; }
+
+        /* 展開明細 */
+        .detail-row { background: var(--cream) !important; }
+        .detail-row td { padding: 0 !important; }
+        .detail-inner {
+            padding: 16px 24px;
+            border-top: 1px solid var(--cream-2);
+        }
+        .detail-title {
+            font-size: 0.78rem; font-weight: 700; letter-spacing: 0.8px;
+            text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;
+        }
+        .detail-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 0; border-bottom: 1px dashed var(--cream-2); font-size: 0.85rem;
+        }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-item-title { color: var(--text); font-weight: 500; }
+        .detail-item-info { color: var(--text-muted); font-size: 0.8rem; }
+        .expand-btn {
+            background: none; border: none; cursor: pointer;
+            color: var(--gold); font-size: 0.82rem; font-weight: 600;
+            padding: 4px 10px; border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+        .expand-btn:hover { background: var(--gold-dim); }
+
+        /* 付款方式 icon */
+        .payment-icon { font-size: 0.82rem; color: var(--text-muted); margin-top: 3px; }
+    </style>
+<link rel="stylesheet" href="css/chat-widget.css"></head>
+<body>
+<div id="navbar"></div>
+<div class="page-wrap">
+    <div class="card fade-up">
+        <div class="card-body">
+            <h2 class="page-title">我的訂單</h2>
+            <div style="overflow-x:auto">
+                <table class="data-table" id="orders-table">
+                    <thead>
+                        <tr>
+                            <th>訂單編號</th>
+                            <th>收件資訊 / 商品明細</th>
+                            <th>下單時間</th>
+                            <th style="text-align:right">金額</th>
+                            <th style="text-align:center">狀態</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-list"></tbody>
+                </table>
+            </div>
+            <div style="text-align:center;margin-top:32px;padding-top:24px;border-top:1px solid var(--cream-2)">
+                <a href="index.html" class="btn btn-outline">← 返回商城首頁</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/orders.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/chat-widget.js"></script><footer class="site-footer">
+    <div class="footer-main">
+        <div class="footer-col">
+            <div class="footer-brand">📚 電子書商城</div>
+            <p>提供技術、商業、心理類精選好書，全館 79 折優惠。</p>
+            <p style="margin-top:12px;font-size:0.78rem;color:rgba(255,255,255,0.35)">閱讀，讓你走得更遠</p>
+        </div>
+        <div class="footer-col">
+            <h4>快速連結</h4>
+            <a href="index.html">商城首頁</a>
+            <a href="orders.html">我的訂單</a>
+            <a href="profile.html">個人資料</a>
+            <a href="chat.html">💬 AI 客服</a>
+        </div>
+        <div class="footer-col">
+            <h4>客服服務</h4>
+            <a href="contact.html">📞 聯絡真人客服</a>
+            <a href="chat.html">🤖 AI 即時諮詢</a>
+            <a href="#" onclick="alert('FAQ 頁面建置中');return false;">❓ 常見問題</a>
+        </div>
+        <div class="footer-col">
+            <h4>聯絡資訊</h4>
+            <div class="footer-contact-row">
+                <div class="icon">📧</div>
+                <div class="text"><strong>客服信箱</strong>service@ebook-shop.com</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">☎️</div>
+                <div class="text"><strong>客服電話</strong>02-1234-5678</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">🕐</div>
+                <div class="text"><strong>服務時間</strong>週一至週五 09:00-18:00</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">© 2026 電子書商城 · All Rights Reserved</div>
+</footer>
+</body>
+</html>

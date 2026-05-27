@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>後台管理 - 電子書商城</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body { background: #f0f2f5; font-family: "Microsoft JhengHei", sans-serif; }
+        .sidebar { width:220px; min-height:100vh; background:#1a1d23; position:fixed; top:0; left:0; padding:30px 0; z-index:100; }
+        .sidebar-brand { color:white; font-size:1.05rem; font-weight:700; padding:0 24px 24px; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:16px; }
+        .sidebar-link { display:block; color:rgba(255,255,255,0.7); padding:12px 24px; text-decoration:none; transition:0.2s; font-size:0.9rem; cursor:pointer; }
+        .sidebar-link:hover, .sidebar-link.active { background:rgba(255,255,255,0.08); color:white; }
+        .main-content { margin-left:220px; padding:32px; }
+        .stat-card { background:white; border-radius:12px; padding:22px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+        .stat-label { font-size:0.82rem; color:#888; margin-bottom:6px; }
+        .stat-value { font-size:1.9rem; font-weight:bold; color:#1a1d23; }
+        .card { background:white; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:none; }
+        .card-header { background:none; border-bottom:1px solid #f0f0f0; padding:18px 24px; font-weight:bold; }
+        .table thead th { background:#f8f9fa; border-top:none; font-size:0.82rem; color:#666; font-weight:600; }
+        .badge-type { padding:4px 10px; border-radius:50px; font-size:0.78rem; font-weight:600; }
+        .form-label { font-weight:600; font-size:0.88rem; color:#444; }
+        .tab-btn { display:inline-block; padding:8px 24px; border-radius:50px; font-size:0.88rem; font-weight:600; cursor:pointer; border:1.5px solid #e0d8cc; background:transparent; color:#666; transition:0.2s; margin-right:8px; }
+        .tab-btn.active { background:#1a1d23; color:white; border-color:#1a1d23; }
+        .img-preview { width:40px; height:52px; object-fit:cover; border-radius:4px; }
+    </style>
+</head>
+<body>
+    <!-- 側邊欄 -->
+    <div class="sidebar">
+        <div class="sidebar-brand">⚙️ 後台管理</div>
+        <div class="sidebar-link tab-btn active" data-tab="dashboard">📊 儀表板</div>
+        <div class="sidebar-link tab-btn" data-tab="products">📦 商品管理</div>
+        <div class="sidebar-link tab-btn" data-tab="orders">📋 訂單管理</div>
+        <div class="sidebar-link tab-btn" data-tab="banners">🖼️ Banner 管理</div>
+        <div class="sidebar-link tab-btn" data-tab="messages">
+            ✉️ 客服留言
+            <span id="pendingMsgBadge" style="display:none;background:#e05252;color:white;font-size:0.7rem;padding:1px 7px;border-radius:50px;margin-left:6px;font-weight:700"></span>
+        </div>
+        <a class="sidebar-link" href="index.html">🏠 回到商城</a>
+        <a class="sidebar-link" href="#" id="adminLogout">🚪 登出</a>
+    </div>
+
+    <div class="main-content">
+        <!-- 頁首 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div style="font-size:1.4rem;font-weight:bold;color:#1a1d23" id="pageTitle">儀表板</div>
+            <div style="text-align:right">
+                <div class="text-muted small">管理員：<span id="adminUser"></span></div>
+                <div style="font-size:0.72rem;color:#e05252;margin-top:3px">
+                    ⚠️ 未經授權存取或竄改資料，可能涉及刑事責任
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Dashboard 區 ===== -->
+        <div id="dashboard-section">
+            <!-- 統計卡片 -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4 col-lg-2">
+                    <div class="stat-card" style="border-left:4px solid #4a90d9">
+                        <div class="stat-label">📚 上架商品</div>
+                        <div class="stat-value" id="dashActiveProducts">-</div>
+                        <div style="font-size:0.72rem;color:#888;margin-top:4px">總商品：<span id="dashTotalProducts">-</span></div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <div class="stat-card" style="border-left:4px solid #38a169">
+                        <div class="stat-label">💰 總營收</div>
+                        <div class="stat-value" style="color:#276749;font-size:1.5rem" id="dashTotalRevenue">-</div>
+                        <div style="font-size:0.72rem;color:#888;margin-top:4px">已付款 + 已完成</div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <div class="stat-card" style="border-left:4px solid #c9a84c">
+                        <div class="stat-label">📋 總訂單數</div>
+                        <div class="stat-value" id="dashTotalOrders">-</div>
+                        <div style="font-size:0.72rem;color:#888;margin-top:4px">含已取消</div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <div class="stat-card" style="border-left:4px solid #e05252">
+                        <div class="stat-label">⏰ 待處理</div>
+                        <div class="stat-value" style="color:#c53030" id="dashPendingCount">-</div>
+                        <div style="font-size:0.72rem;color:#888;margin-top:4px">待付款 + 待取貨</div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <div class="stat-card" style="border-left:4px solid #9b59b6">
+                        <div class="stat-label">👥 會員數</div>
+                        <div class="stat-value" id="dashTotalUsers">-</div>
+                        <div style="font-size:0.72rem;color:#888;margin-top:4px">含 admin</div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <div class="stat-card" style="border-left:4px solid #e67e22">
+                        <div class="stat-label">⚠️ 缺貨 / 低庫存</div>
+                        <div class="stat-value" style="font-size:1.5rem">
+                            <span style="color:#c53030" id="dashOutOfStock">-</span>
+                            <span style="font-size:1rem;color:#999"> / </span>
+                            <span style="color:#c9a84c" id="dashLowStock">-</span>
+                        </div>
+                        <div style="font-size:0.72rem;color:#888;margin-top:4px">缺貨 / 低於10本</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 圖表 + 銷售排行 -->
+            <div class="row g-3 mb-4">
+                <div class="col-lg-6">
+                    <div class="card" style="height:100%">
+                        <div class="card-header">📈 訂單狀態分布</div>
+                        <div class="card-body" style="position:relative;height:280px">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card" style="height:100%">
+                        <div class="card-header">🏆 銷售排行 Top 5</div>
+                        <div class="card-body p-0">
+                            <table class="table table-sm align-middle mb-0" id="topSellingTable">
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 最近訂單 -->
+            <div class="card">
+                <div class="card-header">🕒 最近 5 筆訂單</div>
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead><tr>
+                            <th class="px-4">訂單編號</th>
+                            <th>收件人</th>
+                            <th>金額</th>
+                            <th>狀態</th>
+                            <th>下單時間</th>
+                        </tr></thead>
+                        <tbody id="recentOrders-table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 商品管理區 ===== -->
+        <div id="products-section" style="display:none">
+            <!-- 統計卡片 -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3"><div class="stat-card"><div class="stat-label">📚 上架商品</div><div class="stat-value" id="statTotal">-</div></div></div>
+                <div class="col-md-3"><div class="stat-card"><div class="stat-label">💻 技術類</div><div class="stat-value" id="statTech">-</div></div></div>
+                <div class="col-md-3"><div class="stat-card"><div class="stat-label">💼 商業類</div><div class="stat-value" id="statBusiness">-</div></div></div>
+                <div class="col-md-3"><div class="stat-card"><div class="stat-label">🧠 心理類</div><div class="stat-value" id="statMind">-</div></div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>所有商品</span>
+                    <button class="btn btn-primary btn-sm rounded-pill px-4" onclick="openAddModal()">＋ 新增商品</button>
+                </div>
+                <div class="card-body p-0">
+                    <div id="tableLoading" class="text-center py-5">
+                        <div class="spinner-border text-primary"></div>
+                        <div class="text-muted mt-2 small">載入商品中...</div>
+                    </div>
+                    <div class="table-responsive" id="tableWrap" style="display:none">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead><tr>
+                                <th class="px-4">ID</th>
+                                <th>圖片</th>
+                                <th>書名</th>
+                                <th>作者</th>
+                                <th>類別</th>
+                                <th>售價</th>
+                                <th>庫存</th>
+                                <th>狀態</th>
+                                <th class="text-center">操作</th>
+                            </tr></thead>
+                            <tbody id="product-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 訂單管理區 ===== -->
+        <div id="orders-section" style="display:none">
+            <div class="card">
+                <div class="card-header">所有訂單</div>
+                <div class="card-body p-0">
+                    <div id="orderTableLoading" class="text-center py-5">
+                        <div class="spinner-border text-primary"></div>
+                        <div class="text-muted mt-2 small">載入訂單中...</div>
+                    </div>
+                    <div class="table-responsive" id="orderTableWrap" style="display:none">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead><tr>
+                                <th class="px-4">訂單編號</th>
+                                <th>收件人</th>
+                                <th>商品</th>
+                                <th>金額</th>
+                                <th>狀態</th>
+                                <th>更新狀態</th>
+                            </tr></thead>
+                            <tbody id="order-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Banner 管理區 ===== -->
+        <div id="banners-section" style="display:none">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Banner 管理</span>
+                    <button class="btn btn-primary btn-sm rounded-pill px-4" onclick="openAddBannerModal()">＋ 新增 Banner</button>
+                </div>
+                <div class="card-body p-0">
+                    <div id="bannerLoading" class="text-center py-5">
+                        <div class="spinner-border text-primary"></div>
+                    </div>
+                    <div class="table-responsive" id="bannerWrap" style="display:none">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead><tr>
+                                <th class="px-4" style="width:60px">ID</th>
+                                <th style="width:200px;padding-left:16px">預覽</th>
+                                <th>標題</th>
+                                <th>副標題</th>
+                                <th style="text-align:center;width:100px">狀態</th>
+                                <th style="text-align:center;width:160px">操作</th>
+                            </tr></thead>
+                            <tbody id="banner-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 客服留言區 ===== -->
+        <div id="messages-section" style="display:none">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>客服留言</span>
+                <div>
+                    <select id="msgFilter" class="form-select form-select-sm" style="width:140px;display:inline-block" onchange="loadMessages()">
+                        <option value="all">全部留言</option>
+                        <option value="pending">待處理</option>
+                        <option value="replied">已回覆</option>
+                        <option value="closed">已結案</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div id="msgLoading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+                <div id="msgWrap" style="display:none">
+                    <div id="msgList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- 回覆 Modal -->
+    <div class="modal fade" id="replyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">回覆留言</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3" id="replyContext" style="background:#f8f9fc;border-radius:8px;padding:14px;font-size:0.9rem"></div>
+                    <div class="mb-3">
+                        <label class="form-label">回覆內容</label>
+                        <textarea id="replyContent" class="form-control" rows="6" placeholder="請輸入回覆內容..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">取消</button>
+                    <button class="btn btn-primary rounded-pill px-4" onclick="submitReply()">📨 送出回覆</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner 新增 Modal -->
+    <div class="modal fade" id="bannerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">新增 Banner</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label">圖片網址</label>
+                        <input type="text" id="bannerImageUrl" class="form-control" placeholder="https://...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">標題</label>
+                        <input type="text" id="bannerTitle" class="form-control" placeholder="請輸入標題">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">副標題</label>
+                        <input type="text" id="bannerSubtitle" class="form-control" placeholder="請輸入副標題">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">取消</button>
+                    <button class="btn btn-primary rounded-pill px-4" onclick="saveBanner()">新增</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalTitle">新增商品</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="editId">
+                    <div class="mb-3"><label class="form-label">書名</label><input type="text" id="editTitle" class="form-control" placeholder="請輸入書名"></div>
+                    <div class="mb-3"><label class="form-label">作者</label><input type="text" id="editAuthor" class="form-control" placeholder="請輸入作者"></div>
+                    <div class="mb-3"><label class="form-label">售價（NT$）</label><input type="number" id="editPrice" class="form-control" min="1"></div>
+                    <div class="mb-3">
+                        <label class="form-label">庫存數量</label>
+                        <input type="number" id="editStock" class="form-control" min="0" value="0">
+                        <div class="form-text">商品上架時的庫存，下單會自動扣減</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">類別</label>
+                        <select id="editType" class="form-select">
+                            <option value="tech">💻 技術</option>
+                            <option value="business">💼 商業</option>
+                            <option value="mind">🧠 心理</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">圖片網址（選填，留空自動產生）</label>
+                        <input type="text" id="editImageUrl" class="form-control" placeholder="https://...">
+                        <div class="form-text">可貼上任意圖片連結，留空則依類別自動配圖</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">商品描述</label>
+                        <textarea id="editDescription" class="form-control" rows="5"
+                            placeholder="請輸入商品詳細描述，會顯示在商品詳情頁"
+                            style="resize:vertical;line-height:1.7"></textarea>
+                        <div class="form-text">留空時前台會顯示通用文案；建議 100~300 字</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">取消</button>
+                    <button class="btn btn-primary rounded-pill px-4" id="saveBtn" onclick="saveProduct()">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 刪除確認 Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title fw-bold">確認刪除</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">確定要刪除「<span id="deleteTitle" class="fw-bold text-danger"></span>」嗎？</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary btn-sm rounded-pill" data-bs-dismiss="modal">取消</button>
+                    <button class="btn btn-danger btn-sm rounded-pill px-4" id="confirmDeleteBtn" onclick="confirmDelete()">刪除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

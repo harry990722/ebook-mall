@@ -1,0 +1,26 @@
+/* Bootstrap 整合版：支援購物車間距 + 博客來首頁排版 */
+:root{--bs-primary:#0d6efd;--bs-white:#fff;--bs-dark:#212529;--bkl-orange:#f60;--bkl-red:#d00}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background-color:#fff}
+
+/* 網格系統：讓商品可以並排 */
+.container{width:100%;padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}@media (min-width:768px){.container{max-width:720px}}@media (min-width:1200px){.container{max-width:1140px}}
+.row{display:flex;flex-wrap:wrap;margin-right:-15px;margin-left:-15px}
+.col-md-3{flex:0 0 auto;width:25%;padding:0 15px;box-sizing:border-box}
+
+/* 博客來風格標題與卡片 */
+.section-title{color:var(--bkl-orange);border-left:5px solid var(--bkl-orange);padding-left:10px;font-weight:700;margin:30px 0 20px 0}
+.card{border:none!important;background:none!important;margin-bottom:30px;cursor:pointer}
+.card-img-placeholder{background:#f5f5f5;padding:30px;border-radius:5px;text-align:center;font-size:60px;margin-bottom:10px}
+.card-title{font-size:15px;color:#333;font-weight:700;margin-bottom:5px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-author{font-size:13px;color:#666;margin-bottom:5px}
+.discount-badge{color:var(--bkl-red);font-size:12px;border:1px solid var(--bkl-red);padding:1px 4px;border-radius:3px;margin-right:5px}
+.price-tag{color:var(--bkl-red);font-weight:700;font-size:16px}
+
+/* 購物車表格樣式 (保留之前的功能) */
+.table{width:100%;margin-bottom:1rem;vertical-align:top;border-color:#dee2e6;border-collapse:collapse}
+.table td, .table th{padding:12px 15px; border-bottom:1px solid #dee2e6}
+.navbar{display:flex;align-items:center;padding:12px 0;background-color:#212529;color:#fff}
+.navbar-brand{font-size:1.25rem;text-decoration:none;color:#fff;font-weight:700;margin-left:15px}
+.nav-link{color:#fff;text-decoration:none;padding:0 15px}
+.btn-primary{background-color:var(--bs-primary);color:#fff;border:none;padding:8px 20px;border-radius:50px;cursor:pointer}
+.text-center{text-align:center!important}.fw-bold{font-weight:700!important}.ms-auto{margin-left:auto!important}.d-flex{display:flex!important}

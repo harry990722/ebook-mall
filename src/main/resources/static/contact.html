@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聯絡客服 - 電子書商城</title>
+    <link rel="stylesheet" href="css/site.css">
+    <link rel="stylesheet" href="css/chat-widget.css">
+    <style>
+        .contact-page { max-width: 1000px; margin: 0 auto; padding: 32px 16px 60px; }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 32px;
+            margin-top: 24px;
+        }
+        .form-card, .info-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 32px;
+        }
+        .info-card { background: var(--ink); color: white; }
+        .info-card h3 { color: var(--gold); font-family: "Noto Serif TC", serif; font-size: 1.2rem; margin: 0 0 20px; }
+        .info-item {
+            display: flex; gap: 14px; margin-bottom: 22px;
+        }
+        .info-item .ic {
+            width: 40px; height: 40px;
+            background: rgba(201,168,76,0.15);
+            color: var(--gold);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; font-size: 1.1rem;
+        }
+        .info-item .label {
+            font-size: 0.78rem; color: rgba(255,255,255,0.55);
+            margin-bottom: 2px; letter-spacing: 0.5px;
+        }
+        .info-item .value { color: white; font-weight: 600; font-size: 0.95rem; }
+
+        .form-row { margin-bottom: 18px; }
+        .form-label {
+            display: block;
+            font-size: 0.85rem; font-weight: 600;
+            color: var(--text); margin-bottom: 6px;
+        }
+        .form-label .required { color: var(--red); margin-left: 2px; }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--cream-2);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
+        .form-textarea { resize: vertical; min-height: 140px; line-height: 1.7; }
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .submit-btn {
+            background: var(--ink);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .submit-btn:hover:not(:disabled) {
+            background: var(--gold);
+            transform: translateY(-1px);
+        }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .ai-hint {
+            background: rgba(201,168,76,0.1);
+            border-left: 4px solid var(--gold);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 16px;
+            font-size: 0.88rem;
+        }
+        .ai-hint a { color: var(--gold); font-weight: 700; text-decoration: none; }
+
+        @media (max-width: 800px) {
+            .contact-grid { grid-template-columns: 1fr; }
+            .form-row-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div id="navbar"></div>
+
+<div class="page-wrap">
+    <div class="contact-page">
+        <h2 class="page-title">聯絡真人客服</h2>
+
+        <div class="ai-hint">
+            💡 <strong>溫馨提示：</strong>簡單問題可先試試 <a href="chat.html">AI 客服小書</a>，
+            複雜問題或退換貨需求，請填寫下方表單，客服將於 24 小時內回覆。
+        </div>
+
+        <div class="contact-grid">
+            <!-- 留言表單 -->
+            <div class="form-card">
+                <h3 style="font-family:'Noto Serif TC',serif;margin:0 0 6px">📝 留言給我們</h3>
+                <p style="color:var(--text-muted);font-size:0.85rem;margin:0 0 24px">填寫以下表單，客服將以信箱回覆您</p>
+
+                <div class="form-row form-row-2">
+                    <div>
+                        <label class="form-label">姓名<span class="required">*</span></label>
+                        <input type="text" id="mName" class="form-input" placeholder="請輸入姓名" maxlength="50">
+                    </div>
+                    <div>
+                        <label class="form-label">聯絡電話</label>
+                        <input type="tel" id="mPhone" class="form-input" placeholder="選填" maxlength="20">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label">電子信箱<span class="required">*</span></label>
+                    <input type="email" id="mEmail" class="form-input" placeholder="客服將回覆至此信箱" maxlength="100">
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label">留言主題<span class="required">*</span></label>
+                    <select id="mSubject" class="form-select">
+                        <option value="order">📦 訂單相關</option>
+                        <option value="product">📚 商品問題</option>
+                        <option value="refund">💰 退款／退貨</option>
+                        <option value="account">👤 帳號問題</option>
+                        <option value="other">💬 其他諮詢</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label">留言內容<span class="required">*</span></label>
+                    <textarea id="mContent" class="form-textarea" placeholder="請詳細描述您的問題（最多 1000 字）" maxlength="1000"></textarea>
+                    <div style="text-align:right;font-size:0.75rem;color:var(--text-muted);margin-top:4px">
+                        <span id="charCount">0</span> / 1000
+                    </div>
+                </div>
+
+                <button id="submitBtn" class="submit-btn">📨 送出留言</button>
+            </div>
+
+            <!-- 聯絡資訊 -->
+            <div class="info-card">
+                <h3>📞 聯絡資訊</h3>
+
+                <div class="info-item">
+                    <div class="ic">📧</div>
+                    <div>
+                        <div class="label">客服信箱</div>
+                        <div class="value">service@ebook-shop.com</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="ic">☎️</div>
+                    <div>
+                        <div class="label">客服電話</div>
+                        <div class="value">02-1234-5678</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="ic">💬</div>
+                    <div>
+                        <div class="label">LINE 官方帳號</div>
+                        <div class="value">@ebookshop</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="ic">🕐</div>
+                    <div>
+                        <div class="label">服務時間</div>
+                        <div class="value">週一至週五<br>09:00 - 18:00</div>
+                    </div>
+                </div>
+
+                <div style="background:rgba(201,168,76,0.1);border-radius:10px;padding:14px;margin-top:24px;font-size:0.82rem;color:rgba(255,255,255,0.75);line-height:1.7">
+                    💡 為了快速為您服務，請於留言中提供訂單編號或商品名稱
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/chat-widget.js"></script>
+<script>
+$(document).ready(function () {
+    // 字數計算
+    $("#mContent").on("input", function () {
+        $("#charCount").text($(this).val().length);
+    });
+
+    // 已登入則預填姓名與信箱
+    const username = localStorage.getItem("username");
+    if (username) {
+        $("#mName").val(username);
+    }
+
+    $("#submitBtn").click(function () {
+        const name    = $("#mName").val().trim();
+        const email   = $("#mEmail").val().trim();
+        const phone   = $("#mPhone").val().trim();
+        const subject = $("#mSubject").val();
+        const content = $("#mContent").val().trim();
+
+        if (!name)    { alert("請填寫姓名"); $("#mName").focus(); return; }
+        if (!email)   { alert("請填寫電子信箱"); $("#mEmail").focus(); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            alert("信箱格式不正確"); $("#mEmail").focus(); return;
+        }
+        if (!content) { alert("請填寫留言內容"); $("#mContent").focus(); return; }
+
+        const $btn = $("#submitBtn");
+        $btn.prop("disabled", true).html("送出中...");
+
+        $.ajax({
+            url: "/messages",
+            method: "POST",
+            contentType: "application/json",
+            headers: authHeader(),
+            data: JSON.stringify({ name, email, phone, subject, content }),
+            success: function (res) {
+                alert("✅ 留言已送出！客服將盡快回覆至您的信箱");
+                $("#mName, #mEmail, #mPhone, #mContent").val("");
+                $("#charCount").text("0");
+                $("#mSubject").val("order");
+            },
+            error: function (xhr) {
+                alert("❌ 送出失敗：" + (xhr.responseText || "請稍後再試"));
+            },
+            complete: function () {
+                $btn.prop("disabled", false).html("📨 送出留言");
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>

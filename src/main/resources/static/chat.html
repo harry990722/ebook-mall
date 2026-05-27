@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 客服 - 電子書商城</title>
+    <link rel="stylesheet" href="css/site.css">
+    <style>
+        body { background: var(--cream); }
+
+        .chat-page { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
+
+        .chat-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+            min-height: 500px;
+        }
+
+        /* 頂部標題 */
+        .chat-page-header {
+            background: linear-gradient(135deg, #0F1117 0%, #1A1D2E 100%);
+            color: white;
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .chat-page-avatar {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #C9A84C, #E8C96D);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 12px rgba(201,168,76,0.3);
+        }
+        .chat-page-name {
+            font-size: 1.3rem; font-weight: 700;
+            font-family: "Noto Serif TC", serif;
+        }
+        .chat-page-status {
+            font-size: 0.85rem; color: var(--gold); margin-top: 4px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .chat-page-status::before {
+            content: ""; width: 8px; height: 8px;
+            background: #38a169; border-radius: 50%;
+            box-shadow: 0 0 6px #38a169;
+        }
+
+        /* 訊息區 */
+        .chat-page-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 32px;
+            background: var(--cream);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .cp-msg { max-width: 70%; }
+        .cp-msg.bot  { align-self: flex-start; }
+        .cp-msg.user { align-self: flex-end; }
+
+        .cp-bubble {
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .cp-msg.bot .cp-bubble {
+            background: white;
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+            box-shadow: var(--shadow-sm);
+        }
+        .cp-msg.user .cp-bubble {
+            background: var(--ink);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .cp-time {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .cp-msg.user .cp-time { text-align: right; }
+
+        .cp-typing {
+            display: inline-flex; gap: 5px; padding: 14px 20px;
+            background: white; border-radius: 18px; border-bottom-left-radius: 4px;
+            box-shadow: var(--shadow-sm);
+        }
+        .cp-typing span {
+            width: 8px; height: 8px; background: #C0C4D8; border-radius: 50%;
+            animation: cp-bounce 1.4s infinite;
+        }
+        .cp-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .cp-typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes cp-bounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+            30%           { transform: translateY(-7px); opacity: 1; }
+        }
+
+        /* 快速問題 */
+        .cp-quick {
+            padding: 12px 32px;
+            background: var(--cream);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            border-top: 1px solid var(--cream-2);
+        }
+        .cp-quick-btn {
+            background: white;
+            border: 1px solid var(--cream-2);
+            border-radius: 50px;
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .cp-quick-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateY(-1px);
+        }
+
+        /* 輸入區 */
+        .chat-page-footer {
+            padding: 16px 32px;
+            background: white;
+            border-top: 1px solid var(--cream-2);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .cp-input {
+            flex: 1;
+            border: 1.5px solid var(--cream-2);
+            border-radius: 50px;
+            padding: 14px 22px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+        .cp-input:focus { border-color: var(--gold); }
+        .cp-send {
+            background: var(--ink);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 28px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .cp-send:hover:not(:disabled) {
+            background: var(--gold);
+            transform: translateY(-1px);
+        }
+        .cp-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* 說明卡 */
+        .cp-hint {
+            background: rgba(201,168,76,0.1);
+            border-left: 4px solid var(--gold);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+        .cp-hint strong { color: var(--gold); }
+    </style>
+</head>
+<body>
+<div id="navbar"></div>
+
+<div class="page-wrap">
+    <div class="chat-page">
+        <h2 class="page-title">AI 客服中心</h2>
+
+        <div class="cp-hint">
+            <strong>📚 小書 AI 客服</strong> 可協助您解答商城相關問題，包含：商品查詢、訂單流程、付款方式、會員權益、評論系統等。
+        </div>
+
+        <div class="chat-container">
+            <!-- 標題 -->
+            <div class="chat-page-header">
+                <div class="chat-page-avatar">📚</div>
+                <div>
+                    <div class="chat-page-name">小書 AI 客服</div>
+                    <div class="chat-page-status">線上服務中 · 由 Google Gemini 驅動</div>
+                </div>
+            </div>
+
+            <!-- 訊息區 -->
+            <div class="chat-page-body" id="cpBody">
+                <div class="cp-msg bot">
+                    <div class="cp-bubble">您好！我是電子書商城的 AI 客服「小書」📚
+
+很高興為您服務，請問有什麼可以幫您的呢？您可以詢問商品、訂單、付款相關問題喔！</div>
+                    <div class="cp-time" id="cpInitTime"></div>
+                </div>
+            </div>
+
+            <!-- 快速問題 -->
+            <div class="cp-quick" id="cpQuick">
+                <button class="cp-quick-btn" data-msg="如何取消訂單？">如何取消訂單？</button>
+                <button class="cp-quick-btn" data-msg="付款方式有哪些？">付款方式</button>
+                <button class="cp-quick-btn" data-msg="如何成為會員？">如何成為會員？</button>
+                <button class="cp-quick-btn" data-msg="可以怎麼搜尋商品？">如何搜尋商品</button>
+                <button class="cp-quick-btn" data-msg="評論怎麼寫？">商品評論</button>
+                <button class="cp-quick-btn" data-msg="忘記密碼怎麼辦？">忘記密碼</button>
+            </div>
+
+            <!-- 輸入區 -->
+            <div class="chat-page-footer">
+                <input type="text" id="cpInput" class="cp-input" placeholder="請輸入您的問題..." maxlength="200">
+                <button id="cpSend" class="cp-send">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                    送出
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/navbar.js"></script>
+<script>
+    let cpHistory = [];
+    let cpLoading = false;
+
+    function nowTime() {
+        return new Date().toLocaleTimeString("zh-TW", {hour:"2-digit", minute:"2-digit"});
+    }
+
+    $(document).ready(function () {
+        $("#cpInitTime").text(nowTime());
+
+        $("#cpSend").click(sendCpMessage);
+        $("#cpInput").keydown(function (e) {
+            if (e.key === "Enter") sendCpMessage();
+        });
+        $(document).on("click", ".cp-quick-btn", function () {
+            $("#cpInput").val($(this).data("msg"));
+            sendCpMessage();
+        });
+        $("#cpInput").focus();
+    });
+
+    function appendCpMsg(role, text) {
+        const div = $('<div class="cp-msg ' + (role === "user" ? "user" : "bot") + '"></div>');
+        div.html(`
+            <div class="cp-bubble">${escapeCp(text)}</div>
+            <div class="cp-time">${nowTime()}</div>
+        `);
+        $("#cpBody").append(div);
+        scrollCpToBottom();
+    }
+
+    function showCpTyping() {
+        $("#cpBody").append(`
+            <div class="cp-msg bot" id="cpTyping">
+                <div class="cp-typing"><span></span><span></span><span></span></div>
+            </div>
+        `);
+        scrollCpToBottom();
+    }
+
+    function removeCpTyping() { $("#cpTyping").remove(); }
+
+    function scrollCpToBottom() {
+        const body = document.getElementById("cpBody");
+        body.scrollTop = body.scrollHeight;
+    }
+
+    function escapeCp(text) {
+        const d = document.createElement("div");
+        d.innerText = text;
+        return d.innerHTML.replace(/\n/g, "<br>");
+    }
+
+    function sendCpMessage() {
+        if (cpLoading) return;
+        const msg = $("#cpInput").val().trim();
+        if (!msg) return;
+
+        appendCpMsg("user", msg);
+        $("#cpInput").val("");
+        $("#cpQuick").hide(); // 首次送出後隱藏快速問題
+
+        showCpTyping();
+        cpLoading = true;
+        $("#cpSend").prop("disabled", true);
+
+        $.ajax({
+            url: "/chat/message",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ message: msg, history: cpHistory }),
+            success: function (data) {
+                removeCpTyping();
+                const reply = data.reply || "❌ 沒有收到回應";
+                appendCpMsg("bot", reply);
+                cpHistory.push({ role: "user",      content: msg });
+                cpHistory.push({ role: "assistant", content: reply });
+            },
+            error: function () {
+                removeCpTyping();
+                appendCpMsg("bot", "😅 抱歉，連線失敗，請稍後再試");
+            },
+            complete: function () {
+                cpLoading = false;
+                $("#cpSend").prop("disabled", false);
+                $("#cpInput").focus();
+            }
+        });
+    }
+</script>
+<footer class="site-footer">
+    <div class="footer-main">
+        <div class="footer-col">
+            <div class="footer-brand">📚 電子書商城</div>
+            <p>提供技術、商業、心理類精選好書，全館 79 折優惠。</p>
+            <p style="margin-top:12px;font-size:0.78rem;color:rgba(255,255,255,0.35)">閱讀，讓你走得更遠</p>
+        </div>
+        <div class="footer-col">
+            <h4>快速連結</h4>
+            <a href="index.html">商城首頁</a>
+            <a href="orders.html">我的訂單</a>
+            <a href="profile.html">個人資料</a>
+            <a href="chat.html">💬 AI 客服</a>
+        </div>
+        <div class="footer-col">
+            <h4>客服服務</h4>
+            <a href="contact.html">📞 聯絡真人客服</a>
+            <a href="chat.html">🤖 AI 即時諮詢</a>
+            <a href="#" onclick="alert('FAQ 頁面建置中');return false;">❓ 常見問題</a>
+        </div>
+        <div class="footer-col">
+            <h4>聯絡資訊</h4>
+            <div class="footer-contact-row">
+                <div class="icon">📧</div>
+                <div class="text"><strong>客服信箱</strong>service@ebook-shop.com</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">☎️</div>
+                <div class="text"><strong>客服電話</strong>02-1234-5678</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">🕐</div>
+                <div class="text"><strong>服務時間</strong>週一至週五 09:00-18:00</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">© 2026 電子書商城 · All Rights Reserved</div>
+</footer>
+</body>
+</html>

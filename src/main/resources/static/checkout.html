@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>結帳確認 - 電子書商城</title>
+    <link rel="stylesheet" href="css/site.css">
+    <style>
+        .checkout-grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+        @media(max-width:768px){ .checkout-grid { grid-template-columns: 1fr; } }
+        .section-label {
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 1.2px;
+            text-transform: uppercase; color: var(--text-muted);
+            border-left: 3px solid var(--gold); padding-left: 10px;
+            margin-bottom: 20px;
+        }
+        .order-total {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 0 0; border-top: 1px solid var(--cream-2); margin-top: 8px;
+            font-weight: 700; font-size: 1.1rem;
+        }
+        .order-total span { font-family: 'Noto Serif TC', serif; font-size: 1.4rem; color: var(--red); }
+        .check-wrap { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
+        .check-wrap input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--gold); cursor: pointer; }
+        .check-wrap label { font-size: 0.88rem; color: var(--text-muted); cursor: pointer; }
+    </style>
+<link rel="stylesheet" href="css/chat-widget.css"></head>
+<body>
+<div id="navbar"></div>
+<div class="page-wrap-wide">
+    <h2 class="page-title" style="text-align:left;margin-bottom:32px">結帳確認</h2>
+    <div class="checkout-grid">
+        <!-- 左：商品清單 -->
+        <div class="card fade-up">
+            <div class="card-body">
+                <div class="section-label">商品明細</div>
+                <div style="overflow-x:auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>書名</th>
+                                <th style="text-align:center">單價</th>
+                                <th style="text-align:center">數量</th>
+                                <th style="text-align:center">小計</th>
+                            </tr>
+                        </thead>
+                        <tbody id="checkout-list"></tbody>
+                    </table>
+                </div>
+                <div class="order-total">
+                    <span>應付金額</span>
+                    <span>NT$ <span id="totalPrice">0</span></span>
+                </div>
+            </div>
+        </div>
+        <!-- 右：收件資訊 -->
+        <div class="card fade-up" style="animation-delay:0.1s">
+            <div class="card-body">
+                <div class="section-label">收件資訊</div>
+                <div class="form-group">
+                    <label class="form-label">收件人姓名</label>
+                    <input type="text" id="name" class="form-control" placeholder="請輸入姓名">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">收件地址</label>
+                    <input type="text" id="address" class="form-control" placeholder="請輸入地址">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">付款方式</label>
+                    <select id="paymentMethod" class="form-control form-select">
+                        <option value="credit">💳 信用卡</option>
+                        <option value="cod">🚚 貨到付款</option>
+                        <option value="linepay">💚 LINE Pay</option>
+                    </select>
+                </div>
+                <div class="check-wrap">
+                    <input type="checkbox" id="agree">
+                    <label for="agree">我已確認訂單內容無誤</label>
+                </div>
+                <button id="submitOrder" class="btn btn-primary btn-full btn-lg">確認送出訂單</button>
+                <div style="text-align:center;margin-top:16px">
+                    <a href="cart.html" class="btn btn-outline btn-sm">← 返回購物車</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/checkout.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/chat-widget.js"></script><footer class="site-footer">
+    <div class="footer-main">
+        <div class="footer-col">
+            <div class="footer-brand">📚 電子書商城</div>
+            <p>提供技術、商業、心理類精選好書，全館 79 折優惠。</p>
+            <p style="margin-top:12px;font-size:0.78rem;color:rgba(255,255,255,0.35)">閱讀，讓你走得更遠</p>
+        </div>
+        <div class="footer-col">
+            <h4>快速連結</h4>
+            <a href="index.html">商城首頁</a>
+            <a href="orders.html">我的訂單</a>
+            <a href="profile.html">個人資料</a>
+            <a href="chat.html">💬 AI 客服</a>
+        </div>
+        <div class="footer-col">
+            <h4>客服服務</h4>
+            <a href="contact.html">📞 聯絡真人客服</a>
+            <a href="chat.html">🤖 AI 即時諮詢</a>
+            <a href="#" onclick="alert('FAQ 頁面建置中');return false;">❓ 常見問題</a>
+        </div>
+        <div class="footer-col">
+            <h4>聯絡資訊</h4>
+            <div class="footer-contact-row">
+                <div class="icon">📧</div>
+                <div class="text"><strong>客服信箱</strong>service@ebook-shop.com</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">☎️</div>
+                <div class="text"><strong>客服電話</strong>02-1234-5678</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">🕐</div>
+                <div class="text"><strong>服務時間</strong>週一至週五 09:00-18:00</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">© 2026 電子書商城 · All Rights Reserved</div>
+</footer>
+</body>
+</html>

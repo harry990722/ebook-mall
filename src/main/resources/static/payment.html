@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂單付款 - 電子書商城</title>
+    <link rel="stylesheet" href="css/site.css">
+    <link rel="stylesheet" href="css/chat-widget.css">
+    <style>
+        /* ⭐ 跟 success.html 一致：navbar 在上、卡片置中、footer 在下 */
+        body {
+            background: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .payment-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px;
+        }
+
+        /* 卡片本身保留原本的深色奢華感（信用卡的視覺暗示） */
+        .payment-card {
+            max-width: 480px; width: 100%;
+            background: var(--ink);
+            border-radius: var(--radius-lg);
+            padding: 52px 48px;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            animation: fadeUp 0.5s ease;
+        }
+        .payment-icon { font-size: 3rem; margin-bottom: 16px; }
+        .payment-label {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .payment-amount {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 2.8rem; font-weight: 700;
+            color: var(--gold-light);
+            margin-bottom: 32px;
+        }
+        .payment-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 28px 0; }
+        .payment-note {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 28px;
+            line-height: 1.7;
+        }
+        .btn-pay {
+            width: 100%; padding: 16px;
+            background: var(--gold); color: var(--ink);
+            border: none; border-radius: 50px;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .btn-pay:hover:not(:disabled) {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+        }
+        .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: rgba(255,255,255,0.35);
+            font-size: 0.82rem;
+            text-decoration: none;
+        }
+        .back-link:hover { color: rgba(255,255,255,0.6); }
+    </style>
+</head>
+<body>
+<div id="navbar"></div>
+
+<div class="payment-wrap">
+    <div class="payment-card">
+        <div class="payment-icon">💳</div>
+        <div class="payment-label">本次結帳總金額</div>
+        <div class="payment-amount">NT$ <span id="amount">0</span></div>
+        <div class="payment-divider"></div>
+        <div class="payment-note">
+            請確認金額無誤後，點擊下方按鈕完成付款。<br>
+            付款完成後將立即開通您的電子書權限。
+        </div>
+        <button id="payBtn" class="btn-pay">立即付款</button>
+        <a href="index.html" class="back-link">稍後再付，返回首頁</a>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-main">
+        <div class="footer-col">
+            <div class="footer-brand">📚 電子書商城</div>
+            <p>提供技術、商業、心理類精選好書，全館 79 折優惠。</p>
+            <p style="margin-top:12px;font-size:0.78rem;color:rgba(255,255,255,0.35)">閱讀，讓你走得更遠</p>
+        </div>
+        <div class="footer-col">
+            <h4>快速連結</h4>
+            <a href="index.html">商城首頁</a>
+            <a href="orders.html">我的訂單</a>
+            <a href="profile.html">個人資料</a>
+            <a href="chat.html">💬 AI 客服</a>
+        </div>
+        <div class="footer-col">
+            <h4>客服服務</h4>
+            <a href="contact.html">📞 聯絡真人客服</a>
+            <a href="chat.html">🤖 AI 即時諮詢</a>
+            <a href="#" onclick="alert('FAQ 頁面建置中');return false;">❓ 常見問題</a>
+        </div>
+        <div class="footer-col">
+            <h4>聯絡資訊</h4>
+            <div class="footer-contact-row">
+                <div class="icon">📧</div>
+                <div class="text"><strong>客服信箱</strong>service@ebook-shop.com</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">☎️</div>
+                <div class="text"><strong>客服電話</strong>02-1234-5678</div>
+            </div>
+            <div class="footer-contact-row">
+                <div class="icon">🕐</div>
+                <div class="text"><strong>服務時間</strong>週一至週五 09:00-18:00</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">© 2026 電子書商城 · All Rights Reserved</div>
+</footer>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/payment.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/chat-widget.js"></script>
+</body>
+</html>
